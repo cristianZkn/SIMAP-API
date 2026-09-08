@@ -28,6 +28,11 @@ public static class BitacoraAPI
         // [POST] /api/v1/bitacoras - Crear una nueva bitácora de falla
         bitacoras.MapPost("/", async (IRepositorio<BitacoraFalla> repo, [FromBody] BitacoraFalla nuevaBitacora) =>
         {
+            // Limpiar propiedades de navegación e ID para evitar errores de Identity en la BD
+            nuevaBitacora.Id = 0;
+            nuevaBitacora.Vehiculo = null;
+            nuevaBitacora.Usuario = null;
+
             if (string.IsNullOrWhiteSpace(nuevaBitacora.Descripcion) || string.IsNullOrWhiteSpace(nuevaBitacora.Prioridad) || string.IsNullOrWhiteSpace(nuevaBitacora.EstadoFalla))
                 return Results.BadRequest("La Descripción, Prioridad y Estado son obligatorios.");
 
