@@ -1,6 +1,7 @@
 using SIMAP.Models;
 using Microsoft.EntityFrameworkCore;
 using SIMAP.Services;
+using SIMAP.Repositorios;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -15,72 +16,74 @@ namespace SIMAP.Endpoints
             var usuarios = app.MapGroup("/api/usuarios").WithTags("Usuarios");
 
             //api listar usuarios
-            usuarios.MapGet("/", async (AppDbContext db) => {
-                var lista = await db.Usuarios.Include(u => u.Rol).ToListAsync();
+            usuarios.MapGet("/", async (IRepositorio<Usuario> repo) => {
+                var lista = await repo.ObtenerConIncluidosAsync(u => u.Rol);
                 return Results.Ok(lista);
             });
 
             //api buscar por id 
-            usuarios.MapGet("/{id:int}", async (int id, AppDbContext db) =>
+            usuarios.MapGet("/{id:int}", async (int id, IRepositorio<Usuario> repo) =>
             {
-                var usuario = await db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
+                var usuario = await repo.ObtenerPorIdConIncluidosAsync(id, u => u.Rol);
                 return usuario is null ? Results.NotFound() : Results.Ok(usuario);
             });
 
             //api para crear un usuario (Admin, adicional al registro)
-            usuarios.MapPost("/", async (Usuario u, AppDbContext db, AuthService auth) =>
+            usuarios.MapPost("/", async (Usuario u, IRepositorio<Usuario> repo, AuthService auth) =>
             {
-                // Si la contraseña viene en texto plano, asumiendo que lo pasan en PasswordHash por simplificar o usan /registro
                 u.PasswordHash = auth.HashPassword(u, u.PasswordHash);
-                db.Usuarios.Add(u);
-                await db.SaveChangesAsync();
+                await repo.AgregarAsync(u);
+                await repo.GuardarCambiosAsync();
                 return Results.Created($"/api/usuarios/{u.Id}", u);
             });
 
             //api para editar por id
-            usuarios.MapPut("/{id:int}", async (int id, Usuario u, AppDbContext db, AuthService auth) => {
-                var usuario = await db.Usuarios.FindAsync(id);
+            usuarios.MapPut("/{id:int}", async (int id, Usuario u, IRepositorio<Usuario> repo, AuthService auth) => {
+                var usuario = await repo.ObtenerPorIdAsync(id);
                 if (usuario is null) return Results.NotFound();
 
                 usuario.Nombre = u.Nombre;
                 usuario.Email = u.Email;
                 usuario.RolId = u.RolId;
-                // Si deciden actualizar contraseña
                 if (!string.IsNullOrEmpty(u.PasswordHash))
                 {
                     usuario.PasswordHash = auth.HashPassword(usuario, u.PasswordHash);
                 }
                 
-                await db.SaveChangesAsync();
+                await repo.ActualizarAsync(usuario);
+                await repo.GuardarCambiosAsync();
                 return Results.Ok(usuario);
             });
 
             //api para elimianr por id
-            usuarios.MapDelete("/{id:int}", async (int id, AppDbContext db) =>
+            usuarios.MapDelete("/{id:int}", async (int id, IRepositorio<Usuario> repo) =>
             {
-                var usuario = await db.Usuarios.FindAsync(id);
+                var usuario = await repo.ObtenerPorIdAsync(id);
                 if (usuario is null) return Results.NotFound();
                 
-                db.Usuarios.Remove(usuario);
-                await db.SaveChangesAsync();
+                await repo.EliminarAsync(id);
+                await repo.GuardarCambiosAsync();
                 return Results.NoContent();
             });
 
             // Registro público / login
             usuarios.MapPost("/registro", async (Usuario usuario, string password, 
-                AppDbContext db, AuthService auth) =>
+                IRepositorio<Usuario> repo, AuthService auth) =>
             {
                 usuario.PasswordHash = auth.HashPassword(usuario, password);
-                db.Usuarios.Add(usuario);
-                await db.SaveChangesAsync();
+                await repo.AgregarAsync(usuario);
+                await repo.GuardarCambiosAsync();
                 return Results.Created($"/api/usuarios/{usuario.Id}", usuario);
             });
 
-            usuarios.MapPost("/login", async (LoginRequest login, AppDbContext db, 
+            usuarios.MapPost("/login", async (LoginRequest login, IRepositorio<Usuario> repo, 
                 IConfiguration config, AuthService auth) =>
             {
-                var usuario = await db.Usuarios.Include(u => u.Rol)
-                    .FirstOrDefaultAsync(u => u.Email == login.Email);
+                // Aquí usamos LINQ sobre la lista en memoria (al usar ObtenerConIncluidosAsync retorna todos).
+                // Para una DB grande deberíamos crear un método específico en el repositorio: ObtenerPorEmailAsync.
+                // Como es genérico, filtramos en memoria por ahora.
+                var todos = await repo.ObtenerConIncluidosAsync(u => u.Rol);
+                var usuario = todos.FirstOrDefault(u => u.Email == login.Email);
 
                 if (usuario is null)
                     return Results.Unauthorized();

@@ -35,6 +35,9 @@ builder.Services.AddOpenApi();
 
 // añadimos los servicios de autenticación 
 builder.Services.AddScoped<AuthService>();
+
+// registramos el repositorio genérico
+builder.Services.AddScoped(typeof(SIMAP.Repositorios.IRepositorio<>), typeof(SIMAP.Repositorios.Repositorio<>));
 // agregamos la cadena conexión
 
 var app = builder.Build();

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SIMAP.Models;
-using SIMAP.Services;
+using SIMAP.Repositorios;
 
 namespace SIMAP.Endpoints;
 public static class VehiculoAPI {
@@ -8,29 +8,29 @@ public static class VehiculoAPI {
         var vehiculos = app.MapGroup("/api/vehiculos").WithTags("Vehiculos");
 
         //api listar vehiculos
-        vehiculos.MapGet("/", async (AppDbContext db) => {
-            var lista = await db.Vehiculos.ToListAsync();
+        vehiculos.MapGet("/", async (IRepositorio<Vehiculo> repo) => {
+            var lista = await repo.ObtenerTodosAsync();
             return Results.Ok(lista);
         });
 
         //api para crear un vehiculo
-        vehiculos.MapPost("/", async (Vehiculo v, AppDbContext db) =>
+        vehiculos.MapPost("/", async (Vehiculo v, IRepositorio<Vehiculo> repo) =>
         {
-            db.Vehiculos.Add(v);
-            await db.SaveChangesAsync();
+            await repo.AgregarAsync(v);
+            await repo.GuardarCambiosAsync();
             return Results.Created($"/api/vehiculos/{v.Id}", v);
-        }); // Opcional: .RequireAuthorization()
+        });
 
         //api buscar por id 
-        vehiculos.MapGet("/{id:int}", async (int id, AppDbContext db) =>
+        vehiculos.MapGet("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
-            var vehiculo = await db.Vehiculos.FindAsync(id);
+            var vehiculo = await repo.ObtenerPorIdAsync(id);
             return vehiculo is null ? Results.NotFound() : Results.Ok(vehiculo);
         });
 
         //api para editar por id
-        vehiculos.MapPut("/{id:int}", async (int id, Vehiculo v, AppDbContext db) => {
-            var vehiculo = await db.Vehiculos.FindAsync(id);
+        vehiculos.MapPut("/{id:int}", async (int id, Vehiculo v, IRepositorio<Vehiculo> repo) => {
+            var vehiculo = await repo.ObtenerPorIdAsync(id);
             if (vehiculo is null) return Results.NotFound();
 
             vehiculo.Placa = v.Placa;
@@ -40,18 +40,19 @@ public static class VehiculoAPI {
             vehiculo.Kilometraje = v.Kilometraje;
             vehiculo.Estado = v.Estado;
             
-            await db.SaveChangesAsync();
+            await repo.ActualizarAsync(vehiculo);
+            await repo.GuardarCambiosAsync();
             return Results.Ok(vehiculo);
         });
 
         //api para elimianr por id
-        vehiculos.MapDelete("/{id:int}", async (int id, AppDbContext db) =>
+        vehiculos.MapDelete("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
-            var vehiculo = await db.Vehiculos.FindAsync(id);
+            var vehiculo = await repo.ObtenerPorIdAsync(id);
             if (vehiculo is null) return Results.NotFound();
             
-            db.Vehiculos.Remove(vehiculo);
-            await db.SaveChangesAsync();
+            await repo.EliminarAsync(id);
+            await repo.GuardarCambiosAsync();
             return Results.NoContent();
         });
     }
