@@ -14,7 +14,15 @@
 ## sin autenticación de usuario
 	Scaffold-DbContext "server=.\sqlexpress; Initial Catalog=juegosdb;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
-# Mitigaciones de Seguridad OWASP API Top 10 (2023)
+# Guía simple y contexto del proyecto
+
+Este proyecto (SIMAP) es una API REST profesional construida con **.NET Minimal APIs**. Cuenta con:
+* **Autenticación JWT:** Solo usuarios logueados pueden acceder (Endpoint `/api/v1/auth/login`).
+* **Autorización por Roles (RBAC):** `Admin`, `Mecanico`, y `Conductor` con permisos específicos para proteger cada ruta de la API.
+* **Patrón Repositorio:** El acceso a datos con Entity Framework Core está aislado en `IRepositorio.cs`, logrando que los endpoints sean limpios y desacoplados de la base de datos.
+* **Versionamiento:** Las rutas inician con `/api/v1/` para permitir futuras actualizaciones sin romper clientes antiguos.
+
+# Mitigaciones de Seguridad OWASP API Top 10
 
 En este proyecto se han abordado las siguientes vulnerabilidades del Top 10 de OWASP para APIs:
 

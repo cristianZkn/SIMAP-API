@@ -9,32 +9,34 @@ public static class VehiculoAPI {
             .WithTags("Vehiculos")
             .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
-        //api listar vehiculos
+        // [GET] /api/v1/vehiculos - Obtiene la lista completa de vehículos
         vehiculos.MapGet("/", async (IRepositorio<Vehiculo> repo) => {
             var lista = await repo.ObtenerTodosAsync();
             return Results.Ok(lista);
         });
 
-        //api para crear un vehiculo
+        // [POST] /api/v1/vehiculos - Crea un nuevo vehículo en el sistema
         vehiculos.MapPost("/", async (Vehiculo v, IRepositorio<Vehiculo> repo) =>
         {
             await repo.AgregarAsync(v);
-            await repo.GuardarCambiosAsync();
-            return Results.Created($"/api/vehiculos/{v.Id}", v);
+            await repo.GuardarCambiosAsync(); // Confirmamos los cambios en la BD
+            return Results.Created($"/api/v1/vehiculos/{v.Id}", v);
         });
 
-        //api buscar por id 
+        // [GET] /api/v1/vehiculos/{id} - Busca un vehículo específico por su ID
         vehiculos.MapGet("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
             var vehiculo = await repo.ObtenerPorIdAsync(id);
+            // Retorna 404 Not Found si no existe, o 200 OK si lo encuentra
             return vehiculo is null ? Results.NotFound() : Results.Ok(vehiculo);
         });
 
-        //api para editar por id
+        // [PUT] /api/v1/vehiculos/{id} - Modifica por completo un vehículo existente
         vehiculos.MapPut("/{id:int}", async (int id, Vehiculo v, IRepositorio<Vehiculo> repo) => {
             var vehiculo = await repo.ObtenerPorIdAsync(id);
             if (vehiculo is null) return Results.NotFound();
 
+            // Mapeo manual de propiedades actualizadas
             vehiculo.Placa = v.Placa;
             vehiculo.Marca = v.Marca;
             vehiculo.Modelo = v.Modelo;
@@ -47,7 +49,7 @@ public static class VehiculoAPI {
             return Results.Ok(vehiculo);
         });
 
-        //api para elimianr por id
+        // [DELETE] /api/v1/vehiculos/{id} - Elimina un vehículo por su ID
         vehiculos.MapDelete("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
             var vehiculo = await repo.ObtenerPorIdAsync(id);
@@ -55,7 +57,7 @@ public static class VehiculoAPI {
             
             await repo.EliminarAsync(id);
             await repo.GuardarCambiosAsync();
-            return Results.NoContent();
+            return Results.NoContent(); // 204 No Content indica éxito sin retornar datos
         });
     }
 }

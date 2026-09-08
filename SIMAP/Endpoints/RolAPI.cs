@@ -9,28 +9,28 @@ public static class RolAPI {
             .WithTags("Roles")
             .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
-        //api listar roles
+        // [GET] /api/v1/roles - Obtiene todos los roles del sistema
         roles.MapGet("/", async (IRepositorio<Rol> repo) => {
             var lista = await repo.ObtenerTodosAsync();
             return Results.Ok(lista);
         });
 
-        //api para crear un rol
+        // [POST] /api/v1/roles - Crea un nuevo rol
         roles.MapPost("/", async (Rol r, IRepositorio<Rol> repo) =>
         {
             await repo.AgregarAsync(r);
             await repo.GuardarCambiosAsync();
-            return Results.Created($"/api/roles/{r.Id}", r);
+            return Results.Created($"/api/v1/roles/{r.Id}", r);
         });
 
-        //api buscar por id 
+        // [GET] /api/v1/roles/{id} - Busca un rol específico
         roles.MapGet("/{id:int}", async (int id, IRepositorio<Rol> repo) =>
         {
             var rol = await repo.ObtenerPorIdAsync(id);
             return rol is null ? Results.NotFound() : Results.Ok(rol);
         });
 
-        //api para editar por id
+        // [PUT] /api/v1/roles/{id} - Actualiza un rol existente
         roles.MapPut("/{id:int}", async (int id, Rol r, IRepositorio<Rol> repo) => {
             var rol = await repo.ObtenerPorIdAsync(id);
             if (rol is null) return Results.NotFound();
@@ -43,7 +43,7 @@ public static class RolAPI {
             return Results.Ok(rol);
         });
 
-        //api para elimianr por id
+        // [DELETE] /api/v1/roles/{id} - Elimina un rol
         roles.MapDelete("/{id:int}", async (int id, IRepositorio<Rol> repo) =>
         {
             var rol = await repo.ObtenerPorIdAsync(id);

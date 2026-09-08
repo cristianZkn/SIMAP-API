@@ -9,10 +9,12 @@ public static class MantenimientoAPI {
             .WithTags("Mantenimientos")
             .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
+        // [GET] /api/v1/mantenimientos - Obtiene todos los mantenimientos programados o realizados
         group.MapGet("/", async (IRepositorio<Mantenimiento> repo) => {
             return await repo.ObtenerTodosAsync();
         });
 
+        // [GET] /api/v1/mantenimientos/{id} - Busca un mantenimiento específico
         group.MapGet("/{id}", async (int id, IRepositorio<Mantenimiento> repo) => {
             return await repo.ObtenerPorIdAsync(id)
                 is Mantenimiento mantenimiento
@@ -20,12 +22,14 @@ public static class MantenimientoAPI {
                     : Results.NotFound();
         });
 
+        // [POST] /api/v1/mantenimientos - Registra un nuevo mantenimiento
         group.MapPost("/", async (Mantenimiento mantenimiento, IRepositorio<Mantenimiento> repo) => {
             await repo.AgregarAsync(mantenimiento);
             await repo.GuardarCambiosAsync();
-            return Results.Created($"/api/mantenimientos/{mantenimiento.Id}", mantenimiento);
+            return Results.Created($"/api/v1/mantenimientos/{mantenimiento.Id}", mantenimiento);
         });
         
+        // [PUT] /api/v1/mantenimientos/{id} - Actualiza el estado o detalles de un mantenimiento
         group.MapPut("/{id}", async (int id, Mantenimiento m, IRepositorio<Mantenimiento> repo) => {
             var mantenimiento = await repo.ObtenerPorIdAsync(id);
             if (mantenimiento is null) return Results.NotFound();
@@ -43,6 +47,7 @@ public static class MantenimientoAPI {
             return Results.Ok(mantenimiento);
         });
 
+        // [DELETE] /api/v1/mantenimientos/{id} - Elimina un registro de mantenimiento
         group.MapDelete("/{id}", async (int id, IRepositorio<Mantenimiento> repo) => {
             var mantenimiento = await repo.ObtenerPorIdAsync(id);
             if (mantenimiento is null) return Results.NotFound();

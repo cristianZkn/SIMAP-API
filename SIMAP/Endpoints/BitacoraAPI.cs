@@ -12,28 +12,28 @@ public static class BitacoraAPI
             .WithTags("Bitácora de fallas")
             .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico", "Conductor"));
 
-        //API: Obtener todas las bitácoras
+        // [GET] /api/v1/bitacoras - Obtener todas las bitácoras (fallas reportadas)
         bitacoras.MapGet("/", async (IRepositorio<BitacoraFalla> repo) => {
             var lista = await repo.ObtenerTodosAsync();
             return Results.Ok(lista);
         });
 
-        //API: buscar una bitácora por ID
+        // [GET] /api/v1/bitacoras/{id} - Buscar una bitácora por su ID
         bitacoras.MapGet("/{id}", async (IRepositorio<BitacoraFalla> repo, int id) =>
         {
             var bitacora = await repo.ObtenerPorIdAsync(id);
             return bitacora is null ? Results.NotFound() : Results.Ok(bitacora);
         });
 
-        //API: Crear una nueva bitácora
+        // [POST] /api/v1/bitacoras - Crear una nueva bitácora de falla
         bitacoras.MapPost("/", async (IRepositorio<BitacoraFalla> repo, [FromBody] BitacoraFalla nuevaBitacora) =>
         {
             await repo.AgregarAsync(nuevaBitacora);
             await repo.GuardarCambiosAsync();
-            return Results.Created($"/api/bitacoras/{nuevaBitacora.Id}", nuevaBitacora);
+            return Results.Created($"/api/v1/bitacoras/{nuevaBitacora.Id}", nuevaBitacora);
         });
 
-        // PUT: Actualizar una bitácora
+        // [PUT] /api/v1/bitacoras/{id} - Actualizar la información de una bitácora
         bitacoras.MapPut("/{id}", async (IRepositorio<BitacoraFalla> repo, int id, [FromBody] BitacoraFalla bitacoraActualizada) =>
         {
             var bitacora = await repo.ObtenerPorIdAsync(id);
@@ -52,7 +52,7 @@ public static class BitacoraAPI
             return Results.Ok(bitacora);
         });
 
-        // DELETE: Eliminar una bitácora
+        // [DELETE] /api/v1/bitacoras/{id} - Eliminar una bitácora por ID
         bitacoras.MapDelete("/{id}", async (IRepositorio<BitacoraFalla> repo, int id) =>
         {
             var bitacora = await repo.ObtenerPorIdAsync(id);
