@@ -1,0 +1,6 @@
+@SIMAP_HostAddress = http://localhost:5288
+
+GET {{SIMAP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
