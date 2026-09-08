@@ -5,7 +5,9 @@ using SIMAP.Repositorios;
 namespace SIMAP.Endpoints;
 public static class MantenimientoAPI {
     public static void MapMantenimientoApi(this WebApplication app) {
-        var group = app.MapGroup("/api/mantenimientos").WithTags("Mantenimientos");
+        var group = app.MapGroup("/api/v1/mantenimientos")
+            .WithTags("Mantenimientos")
+            .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
         group.MapGet("/", async (IRepositorio<Mantenimiento> repo) => {
             return await repo.ObtenerTodosAsync();

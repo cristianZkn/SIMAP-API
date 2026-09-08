@@ -5,7 +5,9 @@ using SIMAP.Repositorios;
 namespace SIMAP.Endpoints;
 public static class RolAPI {
     public static void MapRolApi(this WebApplication app) {
-        var roles = app.MapGroup("/api/roles").WithTags("Roles");
+        var roles = app.MapGroup("/api/v1/roles")
+            .WithTags("Roles")
+            .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
         //api listar roles
         roles.MapGet("/", async (IRepositorio<Rol> repo) => {

@@ -58,6 +58,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapAuthApi();
 app.MapBitacoraAPI();
 app.MapMantenimientoApi();
 app.MapUsuarioApi();

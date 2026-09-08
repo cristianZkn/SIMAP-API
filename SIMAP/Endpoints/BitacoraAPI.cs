@@ -8,7 +8,9 @@ public static class BitacoraAPI
 {
     public static void MapBitacoraAPI(this WebApplication app)
     {
-        var bitacoras = app.MapGroup("/api/bitacoras").WithTags("Bitácora de fallas");
+        var bitacoras = app.MapGroup("/api/v1/bitacoras")
+            .WithTags("Bitácora de fallas")
+            .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico", "Conductor"));
 
         //API: Obtener todas las bitácoras
         bitacoras.MapGet("/", async (IRepositorio<BitacoraFalla> repo) => {

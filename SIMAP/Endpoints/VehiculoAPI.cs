@@ -5,7 +5,9 @@ using SIMAP.Repositorios;
 namespace SIMAP.Endpoints;
 public static class VehiculoAPI {
     public static void MapVehiculoApi(this WebApplication app) {
-        var vehiculos = app.MapGroup("/api/vehiculos").WithTags("Vehiculos");
+        var vehiculos = app.MapGroup("/api/v1/vehiculos")
+            .WithTags("Vehiculos")
+            .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
         //api listar vehiculos
         vehiculos.MapGet("/", async (IRepositorio<Vehiculo> repo) => {
