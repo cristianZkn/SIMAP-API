@@ -24,6 +24,9 @@ public static class MantenimientoAPI {
 
         // [POST] /api/v1/mantenimientos - Registra un nuevo mantenimiento
         group.MapPost("/", async (Mantenimiento mantenimiento, IRepositorio<Mantenimiento> repo) => {
+            if (string.IsNullOrWhiteSpace(mantenimiento.Tipo) || string.IsNullOrWhiteSpace(mantenimiento.Estado))
+                return Results.BadRequest("El Tipo y Estado del mantenimiento son obligatorios.");
+
             await repo.AgregarAsync(mantenimiento);
             await repo.GuardarCambiosAsync();
             return Results.Created($"/api/v1/mantenimientos/{mantenimiento.Id}", mantenimiento);
@@ -31,6 +34,9 @@ public static class MantenimientoAPI {
         
         // [PUT] /api/v1/mantenimientos/{id} - Actualiza el estado o detalles de un mantenimiento
         group.MapPut("/{id}", async (int id, Mantenimiento m, IRepositorio<Mantenimiento> repo) => {
+            if (string.IsNullOrWhiteSpace(m.Tipo) || string.IsNullOrWhiteSpace(m.Estado))
+                return Results.BadRequest("El Tipo y Estado del mantenimiento son obligatorios.");
+
             var mantenimiento = await repo.ObtenerPorIdAsync(id);
             if (mantenimiento is null) return Results.NotFound();
 

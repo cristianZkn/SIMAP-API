@@ -19,6 +19,14 @@ namespace SIMAP.Endpoints
             auth.MapPost("/registro", async (Usuario usuario, string password, 
                 IRepositorio<Usuario> repo, AuthService authService) =>
             {
+                // Validación básica de datos
+                if (string.IsNullOrWhiteSpace(usuario.Nombre) || string.IsNullOrWhiteSpace(usuario.Email) || string.IsNullOrWhiteSpace(password))
+                    return Results.BadRequest("El Nombre, Email y Contraseña son obligatorios y no pueden estar en blanco.");
+
+                // Limpia propiedades que no deben insertarse explícitamente
+                usuario.Id = 0;
+                usuario.Rol = null;
+
                 // Hasheamos la contraseña antes de guardarla en la BD (Mitigación de OWASP Broken Authentication)
                 usuario.PasswordHash = authService.HashPassword(usuario, password);
                 

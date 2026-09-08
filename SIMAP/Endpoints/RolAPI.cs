@@ -18,6 +18,9 @@ public static class RolAPI {
         // [POST] /api/v1/roles - Crea un nuevo rol
         roles.MapPost("/", async (Rol r, IRepositorio<Rol> repo) =>
         {
+            if (string.IsNullOrWhiteSpace(r.Nombre) || string.IsNullOrWhiteSpace(r.Descripcion))
+                return Results.BadRequest("El Nombre y Descripción son obligatorios.");
+
             await repo.AgregarAsync(r);
             await repo.GuardarCambiosAsync();
             return Results.Created($"/api/v1/roles/{r.Id}", r);
@@ -32,6 +35,9 @@ public static class RolAPI {
 
         // [PUT] /api/v1/roles/{id} - Actualiza un rol existente
         roles.MapPut("/{id:int}", async (int id, Rol r, IRepositorio<Rol> repo) => {
+            if (string.IsNullOrWhiteSpace(r.Nombre) || string.IsNullOrWhiteSpace(r.Descripcion))
+                return Results.BadRequest("El Nombre y Descripción son obligatorios.");
+
             var rol = await repo.ObtenerPorIdAsync(id);
             if (rol is null) return Results.NotFound();
 

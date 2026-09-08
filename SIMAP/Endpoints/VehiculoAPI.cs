@@ -18,6 +18,11 @@ public static class VehiculoAPI {
         // [POST] /api/v1/vehiculos - Crea un nuevo vehículo en el sistema
         vehiculos.MapPost("/", async (Vehiculo v, IRepositorio<Vehiculo> repo) =>
         {
+            if (string.IsNullOrWhiteSpace(v.Placa) || string.IsNullOrWhiteSpace(v.Marca) || string.IsNullOrWhiteSpace(v.Modelo) || string.IsNullOrWhiteSpace(v.Estado))
+                return Results.BadRequest("Placa, Marca, Modelo y Estado son obligatorios.");
+            if (v.Anio <= 0 || v.Kilometraje < 0)
+                return Results.BadRequest("El Año y Kilometraje deben ser valores válidos.");
+
             await repo.AgregarAsync(v);
             await repo.GuardarCambiosAsync(); // Confirmamos los cambios en la BD
             return Results.Created($"/api/v1/vehiculos/{v.Id}", v);
@@ -33,6 +38,11 @@ public static class VehiculoAPI {
 
         // [PUT] /api/v1/vehiculos/{id} - Modifica por completo un vehículo existente
         vehiculos.MapPut("/{id:int}", async (int id, Vehiculo v, IRepositorio<Vehiculo> repo) => {
+            if (string.IsNullOrWhiteSpace(v.Placa) || string.IsNullOrWhiteSpace(v.Marca) || string.IsNullOrWhiteSpace(v.Modelo) || string.IsNullOrWhiteSpace(v.Estado))
+                return Results.BadRequest("Placa, Marca, Modelo y Estado son obligatorios.");
+            if (v.Anio <= 0 || v.Kilometraje < 0)
+                return Results.BadRequest("El Año y Kilometraje deben ser valores válidos.");
+
             var vehiculo = await repo.ObtenerPorIdAsync(id);
             if (vehiculo is null) return Results.NotFound();
 

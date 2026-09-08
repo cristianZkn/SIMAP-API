@@ -33,6 +33,9 @@ namespace SIMAP.Endpoints
             // [POST] /api/v1/usuarios - (Uso interno de Admin) Crea un usuario directamente
             usuarios.MapPost("/", async (Usuario u, IRepositorio<Usuario> repo, AuthService auth) =>
             {
+                if (string.IsNullOrWhiteSpace(u.Nombre) || string.IsNullOrWhiteSpace(u.Email) || string.IsNullOrWhiteSpace(u.PasswordHash))
+                    return Results.BadRequest("Nombre, Email y Password son obligatorios.");
+
                 // Hashea la contraseña antes de guardarla (obligatorio)
                 u.PasswordHash = auth.HashPassword(u, u.PasswordHash);
                 await repo.AgregarAsync(u);
@@ -42,6 +45,9 @@ namespace SIMAP.Endpoints
 
             // [PUT] /api/v1/usuarios/{id} - Actualiza datos básicos o contraseña de un usuario
             usuarios.MapPut("/{id:int}", async (int id, Usuario u, IRepositorio<Usuario> repo, AuthService auth) => {
+                if (string.IsNullOrWhiteSpace(u.Nombre) || string.IsNullOrWhiteSpace(u.Email))
+                    return Results.BadRequest("Nombre y Email son obligatorios.");
+
                 var usuario = await repo.ObtenerPorIdAsync(id);
                 if (usuario is null) return Results.NotFound();
 

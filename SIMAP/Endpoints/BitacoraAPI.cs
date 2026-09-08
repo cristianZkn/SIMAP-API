@@ -28,6 +28,9 @@ public static class BitacoraAPI
         // [POST] /api/v1/bitacoras - Crear una nueva bitácora de falla
         bitacoras.MapPost("/", async (IRepositorio<BitacoraFalla> repo, [FromBody] BitacoraFalla nuevaBitacora) =>
         {
+            if (string.IsNullOrWhiteSpace(nuevaBitacora.Descripcion) || string.IsNullOrWhiteSpace(nuevaBitacora.Prioridad) || string.IsNullOrWhiteSpace(nuevaBitacora.EstadoFalla))
+                return Results.BadRequest("La Descripción, Prioridad y Estado son obligatorios.");
+
             await repo.AgregarAsync(nuevaBitacora);
             await repo.GuardarCambiosAsync();
             return Results.Created($"/api/v1/bitacoras/{nuevaBitacora.Id}", nuevaBitacora);
@@ -36,6 +39,9 @@ public static class BitacoraAPI
         // [PUT] /api/v1/bitacoras/{id} - Actualizar la información de una bitácora
         bitacoras.MapPut("/{id}", async (IRepositorio<BitacoraFalla> repo, int id, [FromBody] BitacoraFalla bitacoraActualizada) =>
         {
+            if (string.IsNullOrWhiteSpace(bitacoraActualizada.Descripcion) || string.IsNullOrWhiteSpace(bitacoraActualizada.Prioridad) || string.IsNullOrWhiteSpace(bitacoraActualizada.EstadoFalla))
+                return Results.BadRequest("La Descripción, Prioridad y Estado son obligatorios.");
+
             var bitacora = await repo.ObtenerPorIdAsync(id);
             if (bitacora == null)
                 return Results.NotFound("Bitácora no encontrada");
