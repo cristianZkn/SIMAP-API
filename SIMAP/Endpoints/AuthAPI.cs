@@ -16,29 +16,38 @@ namespace SIMAP.Endpoints
             var auth = app.MapGroup("/api/v1/auth").WithTags("Autenticación");
 
             // --- ENDPOINT: Registro de nuevo usuario ---
-            auth.MapPost("/registro", async (Usuario usuario, string password, 
+            // La contraseña llega en el body JSON (no en query string) para evitar que quede
+            // expuesta en los logs del servidor, historial del browser o cabeceras de red.
+            auth.MapPost("/registro", async (RegistroRequest request,
                 IRepositorio<Usuario> repo, AuthService authService) =>
             {
-                // Validación básica de datos
-                if (string.IsNullOrWhiteSpace(usuario.Nombre) || string.IsNullOrWhiteSpace(usuario.Email) || string.IsNullOrWhiteSpace(password))
+                // Validación básica: todos los campos son obligatorios
+                if (string.IsNullOrWhiteSpace(request.Nombre) ||
+                    string.IsNullOrWhiteSpace(request.Email) ||
+                    string.IsNullOrWhiteSpace(request.Password))
                     return Results.BadRequest("El Nombre, Email y Contraseña son obligatorios y no pueden estar en blanco.");
 
-                // Limpia propiedades que no deben insertarse explícitamente
-                usuario.Id = 0;
-                usuario.Rol = null;
+                // Construimos el usuario con Id=0 para que SQL Server genere el ID (IDENTITY)
+                var usuario = new Usuario
+                {
+                    Id = 0,
+                    Nombre = request.Nombre,
+                    Email = request.Email,
+                    RolId = request.RolId,
+                    Rol = null // No insertamos el objeto navegación, solo la FK
+                };
+                // Hasheamos la contraseña antes de guardarla (OWASP Broken Authentication)
+                usuario.PasswordHash = authService.HashPassword(usuario, request.Password);
 
-                // Hasheamos la contraseña antes de guardarla en la BD (Mitigación de OWASP Broken Authentication)
-                usuario.PasswordHash = authService.HashPassword(usuario, password);
-                
-                // Usamos el patrón repositorio para aislar el acceso a la base de datos
                 await repo.AgregarAsync(usuario);
                 await repo.GuardarCambiosAsync();
-                
-                return Results.Created($"/api/v1/usuarios/{usuario.Id}", usuario);
-            }).AllowAnonymous(); // Permitir el registro sin estar logueado
+
+                // Retornamos DTO sin passwordHash (OWASP API3 — no exponer datos sensibles)
+                return Results.Created($"/api/v1/usuarios/{usuario.Id}", new UsuarioDto(usuario));
+            }).AllowAnonymous();
 
             // --- ENDPOINT: Inicio de sesión (Login) ---
-            auth.MapPost("/login", async (LoginRequest login, IRepositorio<Usuario> repo, 
+            auth.MapPost("/login", async (LoginRequest login, IRepositorio<Usuario> repo,
                 IConfiguration config, AuthService authService) =>
             {
                 // Buscamos a todos los usuarios, incluyendo sus roles, y filtramos por email
@@ -48,7 +57,7 @@ namespace SIMAP.Endpoints
                 // Si el usuario no existe, rechazamos la petición
                 if (usuario is null)
                     return Results.Unauthorized();
-                
+
                 // Verificamos que la contraseña enviada coincida con el hash almacenado en la DB
                 var verify = authService.VerifyPassword(usuario, login.Password);
                 if (verify == Microsoft.AspNetCore.Identity.PasswordVerificationResult.Failed)
@@ -58,7 +67,7 @@ namespace SIMAP.Endpoints
                 var rolNombre = usuario.Rol?.Nombre ?? "Usuario";
 
                 // --- CREACIÓN DEL JWT (JSON Web Token) ---
-                
+
                 // 1. Definimos los "Claims" (piezas de información que viajan encriptadas dentro del token)
                 var claims = new List<Claim>
                 {
@@ -85,12 +94,30 @@ namespace SIMAP.Endpoints
                         expires: DateTime.UtcNow.AddMinutes(int.Parse(jwtExpireMinutes)),
                         signingCredentials: credenciales
                     );
-                    
-                // 5. Retornamos el token como una cadena de texto lista para ser usada en los Headers HTTP
-                return Results.Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-            }).AllowAnonymous(); // Permitir login sin token
+
+                // 5. Retornamos el token y los datos públicos del usuario (sin passwordHash)
+                return Results.Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    usuario = new UsuarioDto(usuario) // El frontend necesita saber nombre y rol
+                });
+            }).AllowAnonymous();
         }
-        
+
+        // --- DTOs (Data Transfer Objects) ---
+        // Evitan exponer datos sensibles (passwordHash) en las respuestas de la API (OWASP API3)
+
+        // Body del login: email y contraseña en texto plano (viajan sobre HTTPS)
         record LoginRequest(string Email, string Password);
+
+        // Body del registro: todos los datos + contraseña en texto plano (en el body, no en la URL)
+        record RegistroRequest(string Nombre, string Email, string Password, int RolId);
+
+        // DTO de respuesta público: nunca incluye el hash de la contraseña
+        public record UsuarioDto(int Id, string Nombre, string Email, int RolId, string? Rol)
+        {
+            // Constructor conveniente que convierte desde el modelo Entity Framework
+            public UsuarioDto(Usuario u) : this(u.Id, u.Nombre, u.Email, u.RolId, u.Rol?.Nombre) { }
+        }
     }
 }

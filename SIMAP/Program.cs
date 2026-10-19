@@ -15,12 +15,18 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
 // --- SEGURIDAD OWASP: API8 (Configuración de Seguridad) - CORS Estricto ---
-// Definimos una política que solo permite peticiones desde orígenes específicos de nuestro Frontend
+// Solo se permiten orígenes explícitos del frontend. Nunca se usa "*".
+// Se puede ampliar vía variable de entorno FRONTEND_URL para producción.
+var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:5173";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://misitioseguro.com") // Reemplaza con la URL de tu frontend real
+        policy.WithOrigins(
+                "http://localhost:5173",  // Vite dev server
+                "http://localhost:3000",  // React Scripts alternativo
+                frontendUrl               // URL de producción desde variable de entorno
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -73,6 +79,17 @@ builder.Services.AddScoped(typeof(SIMAP.Repositorios.IRepositorio<>), typeof(SIM
 // agregamos la cadena conexión
 
 var app = builder.Build();
+
+// --- SEGURIDAD: Cabeceras HTTP de seguridad (OWASP API8) ---
+// Estas cabeceras protegen contra ataques comunes como clickjacking y sniffing de contenido.
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");       // Evita MIME sniffing
+    context.Response.Headers.Append("X-Frame-Options", "DENY");                  // Evita clickjacking
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");        // Protección XSS en browsers viejos
+    await next();
+});
 
 app.UseAuthentication(); //¿quién es?
 app.UseAuthorization(); //¿qué puede hacer?
