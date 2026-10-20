@@ -13,7 +13,8 @@ import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { obtenerVehiculos, eliminarVehiculo } from './vehiculoService'
-import { ESTADOS_VEHICULO, type Vehiculo } from '../../shared/types'
+import { type Vehiculo } from '../../shared/types'
+import { useCatalogos } from '../../shared/catalogosContext'
 import { useAuth } from '../auth/AuthContext'
 import { Spinner } from '../../shared/components/Spinner'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
@@ -23,6 +24,7 @@ const ELEMENTOS_POR_PAGINA = 8
 
 export function VehiculosListPage() {
   const { rol } = useAuth()
+  const { estadosVehiculo } = useCatalogos()
   const esAdmin = rol === 'Admin'
   const queryClient = useQueryClient()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -149,7 +151,7 @@ export function VehiculosListPage() {
             onChange={(e) => actualizarFiltro('estado', e.target.value)}
           >
             <option value="">Todos los estados</option>
-            {ESTADOS_VEHICULO.map((est) => (
+            {estadosVehiculo.map((est) => (
               <option key={est} value={est}>
                 {est}
               </option>

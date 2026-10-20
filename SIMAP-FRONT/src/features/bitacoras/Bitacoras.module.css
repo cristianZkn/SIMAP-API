@@ -164,6 +164,12 @@
   letter-spacing: 0.05em;
 }
 
+.prioridadCritica {
+  background-color: rgba(220, 38, 38, 0.25);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
 .prioridadAlta {
   background-color: rgba(239, 68, 68, 0.15);
   color: #f87171;

@@ -16,7 +16,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { obtenerBitacoras, eliminarBitacora, actualizarBitacora } from './bitacoraService'
 import { obtenerVehiculos } from '../vehiculos/vehiculoService'
 import { useAuth } from '../auth/AuthContext'
-import { PRIORIDADES, ESTADOS_FALLA, type BitacoraFalla, type Vehiculo } from '../../shared/types'
+import { type BitacoraFalla, type Vehiculo } from '../../shared/types'
+import { useCatalogos } from '../../shared/catalogosContext'
 import { Spinner } from '../../shared/components/Spinner'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import styles from './Bitacoras.module.css'
@@ -25,6 +26,7 @@ const ELEMENTOS_POR_PAGINA = 8
 
 export function BitacorasListPage() {
   const { rol } = useAuth()
+  const { prioridades, estadosFalla } = useCatalogos()
   const esAdmin = rol === 'Admin'
   const esMecanico = rol === 'Mecanico'
   const puedeReportar = rol === 'Admin' || rol === 'Conductor'
@@ -132,8 +134,15 @@ export function BitacorasListPage() {
         b.descripcion.toLowerCase().includes(busqueda.toLowerCase()) ||
         textoVehiculo.toLowerCase().includes(busqueda.toLowerCase())
 
-      const coincidePrioridad = filtroPrioridad ? b.prioridad.toLowerCase() === filtroPrioridad.toLowerCase() : true
-      const coincideEstado = filtroEstado ? b.estadoFalla.toLowerCase() === filtroEstado.toLowerCase() : true
+      const normalizar = (texto: string) =>
+        texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+
+      const coincidePrioridad = filtroPrioridad
+        ? normalizar(b.prioridad) === normalizar(filtroPrioridad)
+        : true
+      const coincideEstado = filtroEstado
+        ? normalizar(b.estadoFalla) === normalizar(filtroEstado)
+        : true
 
       return coincideTexto && coincidePrioridad && coincideEstado
     })
@@ -205,7 +214,7 @@ export function BitacorasListPage() {
             onChange={(e) => actualizarFiltro('prioridad', e.target.value)}
           >
             <option value="">Todas las prioridades</option>
-            {PRIORIDADES.map((p) => (
+            {prioridades.map((p) => (
               <option key={p} value={p}>
                 {p.charAt(0).toUpperCase() + p.slice(1)}
               </option>
@@ -222,7 +231,7 @@ export function BitacorasListPage() {
             onChange={(e) => actualizarFiltro('estado', e.target.value)}
           >
             <option value="">Todos los estados</option>
-            {ESTADOS_FALLA.map((est) => (
+            {estadosFalla.map((est) => (
               <option key={est} value={est}>
                 {est.charAt(0).toUpperCase() + est.slice(1)}
               </option>
@@ -284,12 +293,15 @@ export function BitacorasListPage() {
                       <td data-label="Descripción">{b.descripcion}</td>
                       <td data-label="Prioridad">
                         <span
-                          className={`${styles.badgePrioridad} ${prioridadLower === 'alta'
-                            ? styles.prioridadAlta
-                            : prioridadLower === 'media'
-                              ? styles.prioridadMedia
-                              : styles.prioridadBaja
-                            }`}
+                          className={`${styles.badgePrioridad} ${
+                            prioridadLower === 'crítica' || prioridadLower === 'critica'
+                              ? styles.prioridadCritica
+                              : prioridadLower === 'alta'
+                                ? styles.prioridadAlta
+                                : prioridadLower === 'media'
+                                  ? styles.prioridadMedia
+                                  : styles.prioridadBaja
+                          }`}
                         >
                           {b.prioridad}
                         </span>
@@ -344,9 +356,11 @@ export function BitacorasListPage() {
                                   style={{ minHeight: '36px', padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
                                   aria-label={`Modificar estado de falla número ${b.id}`}
                                 >
-                                  <option value="pendiente">Pendiente</option>
-                                  <option value="revisión">Revisión</option>
-                                  <option value="resuelta">Resuelta</option>
+                                  {estadosFalla.map((est) => (
+                                    <option key={est} value={est}>
+                                      {est.charAt(0).toUpperCase() + est.slice(1)}
+                                    </option>
+                                  ))}
                                 </select>
                                 <Link
                                   to={`/bitacoras/${b.id}/editar`}

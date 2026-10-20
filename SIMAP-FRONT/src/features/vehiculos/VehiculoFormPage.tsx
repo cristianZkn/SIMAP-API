@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { obtenerVehiculo, crearVehiculo, actualizarVehiculo } from './vehiculoService'
-import { ESTADOS_VEHICULO, type EstadoVehiculo } from '../../shared/types'
+import { useCatalogos } from '../../shared/catalogosContext'
 import { Spinner } from '../../shared/components/Spinner'
 import type { ApiError } from '../../shared/api/httpClient'
 import styles from './Vehiculos.module.css'
@@ -38,7 +38,7 @@ const vehiculoSchema = z.object({
   kilometraje: z
     .number()
     .min(0, 'El kilometraje no puede ser negativo'),
-  estado: z.enum(['Operativo', 'En mantenimiento', 'Fuera de servicio']),
+  estado: z.string().min(1, 'Seleccione un estado operativo'),
 })
 
 type VehiculoFormData = z.infer<typeof vehiculoSchema>
@@ -47,6 +47,7 @@ export function VehiculoFormPage() {
   const { id } = useParams<{ id?: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { estadosVehiculo } = useCatalogos()
   const esEdicion = Boolean(id)
   const vehiculoId = id ? parseInt(id, 10) : 0
 
@@ -85,7 +86,7 @@ export function VehiculoFormPage() {
         modelo: vehiculoExistente.modelo,
         anio: vehiculoExistente.anio,
         kilometraje: vehiculoExistente.kilometraje,
-        estado: vehiculoExistente.estado as EstadoVehiculo,
+        estado: vehiculoExistente.estado,
       })
     }
   }, [vehiculoExistente, reset])
@@ -245,7 +246,7 @@ export function VehiculoFormPage() {
                 aria-invalid={!!errors.estado}
                 {...register('estado')}
               >
-                {ESTADOS_VEHICULO.map((est) => (
+                {estadosVehiculo.map((est) => (
                   <option key={est} value={est}>
                     {est}
                   </option>

@@ -18,6 +18,7 @@ import { obtenerVehiculos } from '../vehiculos/vehiculoService'
 import { useAuth } from '../auth/AuthContext'
 import { Spinner } from '../../shared/components/Spinner'
 import type { ApiError } from '../../shared/api/httpClient'
+import { useCatalogos } from '../../shared/catalogosContext'
 import styles from './Bitacoras.module.css'
 
 const bitacoraSchema = z.object({
@@ -29,8 +30,8 @@ const bitacoraSchema = z.object({
     .string()
     .min(5, 'La descripción de la falla debe tener al menos 5 caracteres')
     .max(500, 'La descripción no puede exceder 500 caracteres'),
-  prioridad: z.enum(['alta', 'media', 'baja']),
-  estadoFalla: z.enum(['pendiente', 'revisión', 'resuelta']),
+  prioridad: z.string().min(1, 'Seleccione un nivel de prioridad'),
+  estadoFalla: z.string().min(1, 'Seleccione un estado de reporte'),
 })
 
 type BitacoraFormData = z.infer<typeof bitacoraSchema>
@@ -40,6 +41,7 @@ export function BitacoraFormPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { usuario, rol } = useAuth()
+  const { prioridades, estadosFalla } = useCatalogos()
   const esEdicion = Boolean(id)
   const bitacoraId = id ? parseInt(id, 10) : 0
   const esMecanico = rol === 'Mecanico'
@@ -80,8 +82,8 @@ export function BitacoraFormPage() {
       reset({
         vehiculoId: bitacoraExistente.vehiculoId,
         descripcion: bitacoraExistente.descripcion,
-        prioridad: bitacoraExistente.prioridad.toLowerCase() as 'alta' | 'media' | 'baja',
-        estadoFalla: bitacoraExistente.estadoFalla.toLowerCase() as 'pendiente' | 'revisión' | 'resuelta',
+        prioridad: bitacoraExistente.prioridad.toLowerCase(),
+        estadoFalla: bitacoraExistente.estadoFalla.toLowerCase(),
       })
     }
   }, [bitacoraExistente, reset])
@@ -209,9 +211,23 @@ export function BitacoraFormPage() {
               aria-invalid={!!errors.prioridad}
               {...register('prioridad')}
             >
-              <option value="baja">Baja (Mantenimiento rutinario o falla menor)</option>
-              <option value="media">Media (Afecta rendimiento pero la unidad rueda)</option>
-              <option value="alta">Alta (Riesgo de seguridad o vehículo inmovilizado)</option>
+              {prioridades.map((p) => {
+                const desc =
+                  p === 'crítica'
+                    ? 'Crítica (Riesgo inminente de parada total o seguridad)'
+                    : p === 'alta'
+                      ? 'Alta (Riesgo de seguridad o vehículo inmovilizado)'
+                      : p === 'media'
+                        ? 'Media (Afecta rendimiento pero la unidad rueda)'
+                        : p === 'baja'
+                          ? 'Baja (Mantenimiento rutinario o falla menor)'
+                          : p.charAt(0).toUpperCase() + p.slice(1)
+                return (
+                  <option key={p} value={p}>
+                    {desc}
+                  </option>
+                )
+              })}
             </select>
             {errors.prioridad && (
               <span id="prioridad-error" role="alert" className={styles.errorCampo}>
@@ -230,9 +246,21 @@ export function BitacoraFormPage() {
               aria-invalid={!!errors.estadoFalla}
               {...register('estadoFalla')}
             >
-              <option value="pendiente">Pendiente (En espera de revisión en taller)</option>
-              <option value="revisión">Revisión (En diagnóstico por mecánico)</option>
-              <option value="resuelta">Resuelta (Reparación completada y verificada)</option>
+              {estadosFalla.map((est) => {
+                const desc =
+                  est === 'pendiente'
+                    ? 'Pendiente (En espera de revisión en taller)'
+                    : est === 'revisión' || est === 'en revisión'
+                      ? 'En revisión (En diagnóstico por mecánico)'
+                      : est === 'resuelta'
+                        ? 'Resuelta (Reparación completada y verificada)'
+                        : est.charAt(0).toUpperCase() + est.slice(1)
+                return (
+                  <option key={est} value={est}>
+                    {desc}
+                  </option>
+                )
+              })}
             </select>
             {errors.estadoFalla && (
               <span id="estadoFalla-error" role="alert" className={styles.errorCampo}>

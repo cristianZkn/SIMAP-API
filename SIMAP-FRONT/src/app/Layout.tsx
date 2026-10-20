@@ -89,6 +89,18 @@ export function Layout() {
                   </NavLink>
                 </li>
               )}
+              {rol === 'Admin' && (
+                <li>
+                  <NavLink
+                    to="/configuracion"
+                    className={({ isActive }) =>
+                      isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
+                    }
+                  >
+                    Configuración
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </nav>
 

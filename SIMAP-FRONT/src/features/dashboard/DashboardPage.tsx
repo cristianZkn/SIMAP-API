@@ -109,13 +109,23 @@ export function DashboardPage() {
     let resueltas = 0
 
     bitacoras.forEach((b) => {
-      const prio = (b.prioridad || '').toLowerCase()
-      if (prio.includes('crit')) critica++
+      const prio = (b.prioridad || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+
+      if (prio.includes('crit') || prio.includes('urg')) critica++
       else if (prio.includes('alt')) alta++
       else if (prio.includes('med')) media++
       else baja++
 
-      const est = (b.estadoFalla || '').toLowerCase()
+      const est = (b.estadoFalla || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+
       if (est.includes('resuel')) resueltas++
       else pendientes++
     })

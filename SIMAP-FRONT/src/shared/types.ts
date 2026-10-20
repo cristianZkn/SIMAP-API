@@ -63,7 +63,7 @@ export interface BitacoraFalla {
   estadoFalla: string
 }
 
-export const PRIORIDADES = ['alta', 'media', 'baja'] as const
+export const PRIORIDADES = ['crítica', 'alta', 'media', 'baja'] as const
 export type Prioridad = typeof PRIORIDADES[number]
 
 export const ESTADOS_FALLA = ['pendiente', 'en revisión', 'resuelta'] as const

@@ -9,6 +9,7 @@ import { VehiculosListPage } from './features/vehiculos/VehiculosListPage'
 import { VehiculoFormPage } from './features/vehiculos/VehiculoFormPage'
 import { BitacorasListPage } from './features/bitacoras/BitacorasListPage'
 import { BitacoraFormPage } from './features/bitacoras/BitacoraFormPage'
+import { ConfiguracionCatalogosPage } from './features/configuracion/ConfiguracionCatalogosPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ForbiddenPage } from './pages/ForbiddenPage'
 
@@ -21,6 +22,7 @@ import { ForbiddenPage } from './pages/ForbiddenPage'
  * - /                   → protegida, Dashboard principal con métricas y gráficos
  * - /vehiculos          → protegida, solo Admin y Mecánico
  * - /bitacoras          → protegida, todos los roles
+ * - /configuracion      → protegida, solo Admin (estados y prioridades)
  * - /403                → página de acceso denegado
  * - /*                  → 404 Not Found
  */
@@ -57,6 +59,11 @@ function App() {
           {/* Edición de bitácoras: Admin (completo) y Mecánico (solo estado) */}
           <Route element={<RoleGuard rolesPermitidos={['Admin', 'Mecanico']} />}>
             <Route path="/bitacoras/:id/editar" element={<BitacoraFormPage />} />
+          </Route>
+
+          {/* Configuración de Estados y Prioridades: Solo Admin */}
+          <Route element={<RoleGuard rolesPermitidos={['Admin']} />}>
+            <Route path="/configuracion" element={<ConfiguracionCatalogosPage />} />
           </Route>
         </Route>
       </Route>

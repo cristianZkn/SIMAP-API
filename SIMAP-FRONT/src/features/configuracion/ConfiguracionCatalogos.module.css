@@ -1,0 +1,245 @@
+/* ConfiguracionCatalogos.module.css — Estilos para el panel de administración de catálogos */
+
+.contenedor {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.encabezado {
+  margin-bottom: 2rem;
+}
+
+.titulo {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.subtitulo {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  max-width: 800px;
+  line-height: 1.6;
+}
+
+.alertaExito {
+  padding: 0.875rem 1.25rem;
+  background-color: var(--color-success-bg);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #86efac;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.alertaError {
+  padding: 0.875rem 1.25rem;
+  background-color: var(--color-danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.gridCatalogos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.tarjetaCatalogo {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.tarjetaCatalogo:focus-within {
+  border-color: var(--color-primary);
+}
+
+.seccionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.seccionTitulo {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.contadorBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.seccionDescripcion {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.formularioAgregar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.inputTexto {
+  flex: 1;
+  background-color: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.625rem 0.875rem;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  min-height: 44px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputTexto:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.btnAgregar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 80px;
+  transition: background-color 0.2s ease;
+}
+
+.btnAgregar:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btnAgregar:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.listaItems {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.itemFila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  background-color: rgba(11, 15, 25, 0.5);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.itemFila:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.itemEtiqueta {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+.btnEliminar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 36px;
+  min-width: 36px;
+  transition: all 0.2s ease;
+}
+
+.btnEliminar:hover {
+  background-color: var(--color-danger-bg);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btnEliminar:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 1px;
+}
+
+.seccionRestablecer {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.textoRestablecer {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  max-width: 600px;
+}
+
+.btnRestablecer {
+  background-color: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.2s ease;
+}
+
+.btnRestablecer:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-text-muted);
+}
+
+.btnRestablecer:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
