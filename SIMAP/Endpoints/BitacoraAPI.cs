@@ -12,16 +12,16 @@ public static class BitacoraAPI
             .WithTags("Bitácora de fallas")
             .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico", "Conductor"));
 
-        // [GET] /api/v1/bitacoras - Obtener todas las bitácoras (fallas reportadas)
+        // [GET] /api/v1/bitacoras - Obtener todas las bitácoras (fallas reportadas) con vehículo incluido
         bitacoras.MapGet("/", async (IRepositorio<BitacoraFalla> repo) => {
-            var lista = await repo.ObtenerTodosAsync();
+            var lista = await repo.ObtenerConIncluidosAsync(b => b.Vehiculo);
             return Results.Ok(lista);
         });
 
-        // [GET] /api/v1/bitacoras/{id} - Buscar una bitácora por su ID
-        bitacoras.MapGet("/{id}", async (IRepositorio<BitacoraFalla> repo, int id) =>
+        // [GET] /api/v1/bitacoras/{id} - Buscar una bitácora por su ID con vehículo incluido
+        bitacoras.MapGet("/{id:int}", async (int id, IRepositorio<BitacoraFalla> repo) =>
         {
-            var bitacora = await repo.ObtenerPorIdAsync(id);
+            var bitacora = await repo.ObtenerPorIdConIncluidosAsync(id, b => b.Vehiculo);
             return bitacora is null ? Results.NotFound() : Results.Ok(bitacora);
         });
 

@@ -7,15 +7,15 @@ public static class VehiculoAPI {
     public static void MapVehiculoApi(this WebApplication app) {
         var vehiculos = app.MapGroup("/api/v1/vehiculos")
             .WithTags("Vehiculos")
-            .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
+            .RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico", "Conductor"));
 
-        // [GET] /api/v1/vehiculos - Obtiene la lista completa de vehículos
+        // [GET] /api/v1/vehiculos - Obtiene la lista completa de vehículos (visible para todos los roles para reporte de fallas)
         vehiculos.MapGet("/", async (IRepositorio<Vehiculo> repo) => {
             var lista = await repo.ObtenerTodosAsync();
             return Results.Ok(lista);
         });
 
-        // [POST] /api/v1/vehiculos - Crea un nuevo vehículo en el sistema
+        // [POST] /api/v1/vehiculos - Crea un nuevo vehículo (solo Admin y Mecánico)
         vehiculos.MapPost("/", async (Vehiculo v, IRepositorio<Vehiculo> repo) =>
         {
             if (string.IsNullOrWhiteSpace(v.Placa) || string.IsNullOrWhiteSpace(v.Marca) || string.IsNullOrWhiteSpace(v.Modelo) || string.IsNullOrWhiteSpace(v.Estado))
@@ -26,7 +26,7 @@ public static class VehiculoAPI {
             await repo.AgregarAsync(v);
             await repo.GuardarCambiosAsync(); // Confirmamos los cambios en la BD
             return Results.Created($"/api/v1/vehiculos/{v.Id}", v);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
         // [GET] /api/v1/vehiculos/{id} - Busca un vehículo específico por su ID
         vehiculos.MapGet("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
@@ -57,9 +57,9 @@ public static class VehiculoAPI {
             await repo.ActualizarAsync(vehiculo);
             await repo.GuardarCambiosAsync();
             return Results.Ok(vehiculo);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
-        // [DELETE] /api/v1/vehiculos/{id} - Elimina un vehículo por su ID
+        // [DELETE] /api/v1/vehiculos/{id} - Elimina un vehículo por su ID (solo Admin y Mecánico)
         vehiculos.MapDelete("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
             var vehiculo = await repo.ObtenerPorIdAsync(id);
@@ -68,6 +68,6 @@ public static class VehiculoAPI {
             await repo.EliminarAsync(id);
             await repo.GuardarCambiosAsync();
             return Results.NoContent(); // 204 No Content indica éxito sin retornar datos
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
     }
 }

@@ -51,11 +51,12 @@ export interface Vehiculo {
 export const ESTADOS_VEHICULO = ['Operativo', 'En mantenimiento', 'Fuera de servicio'] as const
 export type EstadoVehiculo = typeof ESTADOS_VEHICULO[number]
 
-// --- BitacoraFalla ---
 export interface BitacoraFalla {
   id: number
   vehiculoId: number
+  vehiculo?: Vehiculo | null
   usuarioId: number
+  usuario?: UsuarioDto | null
   fechaReporte: string   // ISO 8601 string — el servidor usa DateTime UTC
   descripcion: string
   prioridad: string
