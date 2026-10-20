@@ -104,7 +104,7 @@ export function VehiculosListPage() {
       {/* Encabezado y Acción Principal */}
       <div className={styles.encabezadoSeccion}>
         <div>
-          <h1 className={styles.titulo}>Parque Automotor</h1>
+          <h1 className={styles.titulo}>Modulo de Gestión Automotriz</h1>
           <p className={styles.subtitulo}>
             Gestión y seguimiento de los vehículos operativos en la flota.
           </p>

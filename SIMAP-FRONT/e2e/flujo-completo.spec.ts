@@ -25,7 +25,7 @@ test.describe('Flujo Completo de Negocio SIMAP (E2E)', () => {
 
     // 3. Navegación al recurso principal (/vehiculos)
     await page.waitForURL('**/vehiculos', { timeout: 6000 })
-    await expect(page.getByRole('heading', { level: 1, name: /Parque Automotor/i })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: /M[oó]dulo de Gesti[oó]n Automotriz|Parque Automotor/i })).toBeVisible()
 
     // 4. Clic en "Registrar Vehículo" y navegación al formulario
     await page.getByRole('link', { name: /Registrar Vehículo/i }).click()
@@ -44,8 +44,9 @@ test.describe('Flujo Completo de Negocio SIMAP (E2E)', () => {
     await page.getByRole('button', { name: /Crear Vehículo/i }).click()
     await page.waitForURL('**/vehiculos', { timeout: 6000 })
 
-    // 7. Verificar que la nueva unidad vehicular creada aparece en la tabla
-    await expect(page.getByRole('heading', { level: 1, name: /Parque Automotor/i })).toBeVisible()
+    // 7. Filtrar por la placa creada y verificar que aparece en la tabla
+    await expect(page.getByRole('heading', { level: 1, name: /M[oó]dulo de Gesti[oó]n Automotriz|Parque Automotor/i })).toBeVisible()
+    await page.getByLabel(/Buscar por placa, marca o modelo/i).fill(placaUnica)
     await expect(page.getByText(placaUnica)).toBeVisible()
     await expect(page.getByRole('cell', { name: 'Toyota Hilux 4x4' }).first()).toBeVisible()
   })

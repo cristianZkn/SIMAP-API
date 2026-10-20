@@ -109,7 +109,7 @@ export function Layout() {
       {/* Footer accesible */}
       <footer className={styles.footer}>
         <div className={styles.footerContainer}>
-          <p>© {ANIO_ACTUAL} SIMAP — Sistema de Mantenimiento de Parque Automotor.</p>
+          <p>© {ANIO_ACTUAL} SIMAP — Sistema de Mantenimiento Preventivo.</p>
           <p>UT2: Lenguaje de Programación Web II</p>
         </div>
       </footer>

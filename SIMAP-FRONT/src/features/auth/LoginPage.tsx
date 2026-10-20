@@ -72,7 +72,7 @@ export function LoginPage() {
     <div className={styles.contenedor}>
       <main id="contenido-principal" className={styles.tarjeta}>
         <h1 className={styles.titulo}>SIMAP</h1>
-        <p className={styles.subtitulo}>Sistema de Mantenimiento de Parque Automotor</p>
+        <p className={styles.subtitulo}>Sistema de Mantenimiento Preventivo</p>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate aria-label="Formulario de inicio de sesión">
           {/* Mensaje de error del servidor — anunciado por lectores de pantalla */}
