@@ -231,7 +231,7 @@ export function BitacoraFormPage() {
               {...register('estadoFalla')}
             >
               <option value="pendiente">Pendiente (En espera de revisión en taller)</option>
-              <option value="en revisión">En revisión (En diagnóstico por mecánico)</option>
+              <option value="revisión">Revisión (En diagnóstico por mecánico)</option>
               <option value="resuelta">Resuelta (Reparación completada y verificada)</option>
             </select>
             {errors.estadoFalla && (
