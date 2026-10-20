@@ -1,0 +1,93 @@
+/* ErrorPage.module.css — Estilos para páginas de error (404, 403) */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.card {
+  max-width: 500px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.code {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #1e40af;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.codeDanger {
+  color: #dc2626;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  font-size: 0.9375rem;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.btnPrimary:hover {
+  background-color: #1d4ed8;
+  text-decoration: none;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #334155;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btnSecondary:hover {
+  background-color: #e2e8f0;
+}

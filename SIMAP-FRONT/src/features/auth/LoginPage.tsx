@@ -93,7 +93,6 @@ export function LoginPage() {
               {...emailRest}
               ref={(el) => {
                 rhfRef(el)
-                // @ts-expect-error — el ref muteable necesita asignación directa
                 emailRef.current = el
               }}
             />

@@ -1,0 +1,181 @@
+/* Layout.module.css — Estilos mobile-first para la estructura principal de la aplicación */
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.navContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-decoration: none;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brandBadge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.navLink {
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.navLink:hover {
+  color: #0f172a;
+  background-color: #f1f5f9;
+  text-decoration: none;
+}
+
+.navLinkActive {
+  color: #1d4ed8;
+  background-color: #eff6ff;
+  font-weight: 600;
+}
+
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.875rem;
+}
+
+.userName {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.roleBadge {
+  font-size: 0.75rem;
+  color: #475569;
+  background-color: #e2e8f0;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+}
+
+.logoutBtn {
+  min-height: 40px;
+  padding: 0.4rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.logoutBtn:hover {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.logoutBtn:focus-visible {
+  outline: 2px solid #b91c1c;
+  outline-offset: 2px;
+}
+
+.mainContent {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.mainContent:focus {
+  outline: none;
+}
+
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 1.25rem 1rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin-top: auto;
+}
+
+.footerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .navContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navLinks {
+    justify-content: center;
+  }
+
+  .userArea {
+    justify-content: space-between;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.5rem;
+  }
+}
