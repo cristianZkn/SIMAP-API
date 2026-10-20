@@ -217,6 +217,9 @@ async function main() {
         estado: 'Operativo',
       }),
     })
+    const dataAdminVehiculo = await resAdminPost.json()
+    const idAdminVehiculo = dataAdminVehiculo?.id
+
     registrar(
       'OWASP API5: RBAC',
       'Administrador autorizado creando vehiculo devuelve HTTP 201 Created',
@@ -264,6 +267,20 @@ async function main() {
       neutralizadoEnServidor ? 'Texto plano intacto' : 'Modificado',
       neutralizadoEnServidor
     )
+
+    // Limpieza de vehiculos de prueba para evitar registros residuales en la BD
+    if (idXss) {
+      await fetch(`${BASE_URL}/vehiculos/${idXss}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${tokenAdmin}` },
+      })
+    }
+    if (idAdminVehiculo) {
+      await fetch(`${BASE_URL}/vehiculos/${idAdminVehiculo}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${tokenAdmin}` },
+      })
+    }
 
     // -------------------------------------------------------------
     // 6. Rate Limiting (OWASP API4)

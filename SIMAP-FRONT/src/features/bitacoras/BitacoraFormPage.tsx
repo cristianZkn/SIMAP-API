@@ -30,7 +30,7 @@ const bitacoraSchema = z.object({
     .min(5, 'La descripción de la falla debe tener al menos 5 caracteres')
     .max(500, 'La descripción no puede exceder 500 caracteres'),
   prioridad: z.enum(['alta', 'media', 'baja']),
-  estadoFalla: z.enum(['pendiente', 'en revisión', 'resuelta']),
+  estadoFalla: z.enum(['pendiente', 'revisión', 'resuelta']),
 })
 
 type BitacoraFormData = z.infer<typeof bitacoraSchema>
@@ -81,7 +81,7 @@ export function BitacoraFormPage() {
         vehiculoId: bitacoraExistente.vehiculoId,
         descripcion: bitacoraExistente.descripcion,
         prioridad: bitacoraExistente.prioridad.toLowerCase() as 'alta' | 'media' | 'baja',
-        estadoFalla: bitacoraExistente.estadoFalla.toLowerCase() as 'pendiente' | 'en revisión' | 'resuelta',
+        estadoFalla: bitacoraExistente.estadoFalla.toLowerCase() as 'pendiente' | 'revisión' | 'resuelta',
       })
     }
   }, [bitacoraExistente, reset])
@@ -132,15 +132,15 @@ export function BitacoraFormPage() {
             {esMecanico
               ? `Actualizar Estado de Falla #${bitacoraId}`
               : esEdicion
-              ? `Actualizar Falla #${bitacoraId}`
-              : 'Reportar Falla Mecánica'}
+                ? `Actualizar Falla #${bitacoraId}`
+                : 'Reportar Falla Mecánica'}
           </h1>
           <p className={styles.subtitulo}>
             {esMecanico
-              ? 'Como mecánico responsable, actualice el estado operativo de la incidencia (pendiente, en revisión, resuelta).'
+              ? 'Como mecánico responsable, actualice el estado operativo de la incidencia (Pendiente, Revisión, Resuelta).'
               : esEdicion
-              ? 'Modifique el diagnóstico, prioridad o estado del reporte de falla.'
-              : 'Seleccione la unidad afectada e indique el detalle de la incidencia observada.'}
+                ? 'Modifique el diagnóstico, prioridad o estado del reporte de falla.'
+                : 'Seleccione la unidad afectada e indique el detalle de la incidencia observada.'}
           </p>
         </div>
       </div>
@@ -254,10 +254,10 @@ export function BitacoraFormPage() {
               {isSubmitting || mutacionGuardar.isPending
                 ? 'Guardando...'
                 : esMecanico
-                ? 'Guardar Estado'
-                : esEdicion
-                ? 'Actualizar Falla'
-                : 'Reportar Falla'}
+                  ? 'Guardar Estado'
+                  : esEdicion
+                    ? 'Actualizar Falla'
+                    : 'Reportar Falla'}
             </button>
           </div>
         </form>
