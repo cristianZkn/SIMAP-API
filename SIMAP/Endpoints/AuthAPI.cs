@@ -113,11 +113,6 @@ namespace SIMAP.Endpoints
         // Body del registro: todos los datos + contraseña en texto plano (en el body, no en la URL)
         record RegistroRequest(string Nombre, string Email, string Password, int RolId);
 
-        // DTO de respuesta público: nunca incluye el hash de la contraseña
-        public record UsuarioDto(int Id, string Nombre, string Email, int RolId, string? Rol)
-        {
-            // Constructor conveniente que convierte desde el modelo Entity Framework
-            public UsuarioDto(Usuario u) : this(u.Id, u.Nombre, u.Email, u.RolId, u.Rol?.Nombre) { }
-        }
+        // DTO de respuesta público está definido globalmente en SIMAP.Models.UsuarioDto
     }
 }

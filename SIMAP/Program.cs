@@ -91,11 +91,20 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseAuthentication(); //¿quién es?
-app.UseAuthorization(); //¿qué puede hacer?
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Manejador global de excepciones para entornos no desarrollo (OWASP API8 - Errores genéricos sin trazas internas)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler(exceptionApp =>
+    {
+        exceptionApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { message = "Ocurrió un error interno en el servidor." });
+        });
+    });
+}
+else
 {
     app.MapOpenApi();
     app.MapScalarApiReference(options =>
@@ -106,11 +115,19 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Activar las mitigaciones de seguridad configuradas arriba
+// 1. Redirección HTTPS
+app.UseHttpsRedirection();
+
+// 2. CORS (DEBE ejecutarse antes de Authentication/Authorization para que peticiones preflight OPTIONS
+//    y respuestas de error 401/403 incluyan las cabeceras Access-Control-Allow-Origin)
 app.UseCors("PermitirFrontend");
+
+// 3. Rate Limiting (OWASP API4)
 app.UseRateLimiter();
 
-app.UseHttpsRedirection();
+// 4. Autenticación y Autorización
+app.UseAuthentication(); // ¿Quién es?
+app.UseAuthorization();  // ¿Qué permisos tiene?
 app.MapAuthApi();
 app.MapBitacoraAPI();
 app.MapMantenimientoApi();

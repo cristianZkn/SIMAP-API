@@ -17,17 +17,17 @@ namespace SIMAP.Endpoints
                 .WithTags("Usuarios")
                 .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
-            // [GET] /api/v1/usuarios - Obtiene todos los usuarios y sus roles asociados
+            // [GET] /api/v1/usuarios - Obtiene todos los usuarios y sus roles asociados (sin passwordHash)
             usuarios.MapGet("/", async (IRepositorio<Usuario> repo) => {
                 var lista = await repo.ObtenerConIncluidosAsync(u => u.Rol);
-                return Results.Ok(lista);
+                return Results.Ok(lista.Select(u => new UsuarioDto(u)));
             });
 
-            // [GET] /api/v1/usuarios/{id} - Busca un usuario específico e incluye su rol
+            // [GET] /api/v1/usuarios/{id} - Busca un usuario específico e incluye su rol (sin passwordHash)
             usuarios.MapGet("/{id:int}", async (int id, IRepositorio<Usuario> repo) =>
             {
                 var usuario = await repo.ObtenerPorIdConIncluidosAsync(id, u => u.Rol);
-                return usuario is null ? Results.NotFound() : Results.Ok(usuario);
+                return usuario is null ? Results.NotFound() : Results.Ok(new UsuarioDto(usuario));
             });
 
             // [POST] /api/v1/usuarios - (Uso interno de Admin) Crea un usuario directamente
@@ -40,7 +40,7 @@ namespace SIMAP.Endpoints
                 u.PasswordHash = auth.HashPassword(u, u.PasswordHash);
                 await repo.AgregarAsync(u);
                 await repo.GuardarCambiosAsync();
-                return Results.Created($"/api/v1/usuarios/{u.Id}", u);
+                return Results.Created($"/api/v1/usuarios/{u.Id}", new UsuarioDto(u));
             });
 
             // [PUT] /api/v1/usuarios/{id} - Actualiza datos básicos o contraseña de un usuario
@@ -48,7 +48,7 @@ namespace SIMAP.Endpoints
                 if (string.IsNullOrWhiteSpace(u.Nombre) || string.IsNullOrWhiteSpace(u.Email))
                     return Results.BadRequest("Nombre y Email son obligatorios.");
 
-                var usuario = await repo.ObtenerPorIdAsync(id);
+                var usuario = await repo.ObtenerPorIdConIncluidosAsync(id, x => x.Rol);
                 if (usuario is null) return Results.NotFound();
 
                 usuario.Nombre = u.Nombre;
@@ -63,7 +63,7 @@ namespace SIMAP.Endpoints
                 
                 await repo.ActualizarAsync(usuario);
                 await repo.GuardarCambiosAsync();
-                return Results.Ok(usuario);
+                return Results.Ok(new UsuarioDto(usuario));
             });
 
             // [DELETE] /api/v1/usuarios/{id} - Elimina un usuario del sistema permanentemente
