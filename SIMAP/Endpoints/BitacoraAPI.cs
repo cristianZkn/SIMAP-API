@@ -25,7 +25,7 @@ public static class BitacoraAPI
             return bitacora is null ? Results.NotFound() : Results.Ok(bitacora);
         });
 
-        // [POST] /api/v1/bitacoras - Crear una nueva bitácora de falla
+        // [POST] /api/v1/bitacoras - Crear una nueva bitácora de falla (Admin y Conductor)
         bitacoras.MapPost("/", async (IRepositorio<BitacoraFalla> repo, [FromBody] BitacoraFalla nuevaBitacora) =>
         {
             // Limpiar propiedades de navegación e ID para evitar errores de Identity en la BD
@@ -39,32 +39,44 @@ public static class BitacoraAPI
             await repo.AgregarAsync(nuevaBitacora);
             await repo.GuardarCambiosAsync();
             return Results.Created($"/api/v1/bitacoras/{nuevaBitacora.Id}", nuevaBitacora);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Conductor"));
 
-        // [PUT] /api/v1/bitacoras/{id} - Actualizar la información de una bitácora
-        bitacoras.MapPut("/{id}", async (IRepositorio<BitacoraFalla> repo, int id, [FromBody] BitacoraFalla bitacoraActualizada) =>
+        // [PUT] /api/v1/bitacoras/{id} - Actualizar bitácora (Admin completo, Mecánico solo estado)
+        bitacoras.MapPut("/{id:int}", async (IRepositorio<BitacoraFalla> repo, int id, [FromBody] BitacoraFalla bitacoraActualizada, System.Security.Claims.ClaimsPrincipal user) =>
         {
-            if (string.IsNullOrWhiteSpace(bitacoraActualizada.Descripcion) || string.IsNullOrWhiteSpace(bitacoraActualizada.Prioridad) || string.IsNullOrWhiteSpace(bitacoraActualizada.EstadoFalla))
-                return Results.BadRequest("La Descripción, Prioridad y Estado son obligatorios.");
-
             var bitacora = await repo.ObtenerPorIdAsync(id);
             if (bitacora == null)
                 return Results.NotFound("Bitácora no encontrada");
 
-            bitacora.VehiculoId = bitacoraActualizada.VehiculoId;
-            bitacora.UsuarioId = bitacoraActualizada.UsuarioId;
-            bitacora.FechaReporte = bitacoraActualizada.FechaReporte;
-            bitacora.Descripcion = bitacoraActualizada.Descripcion;
-            bitacora.Prioridad = bitacoraActualizada.Prioridad;
-            bitacora.EstadoFalla = bitacoraActualizada.EstadoFalla;
+            var esSoloMecanico = user.IsInRole("Mecanico") && !user.IsInRole("Admin");
+            if (esSoloMecanico)
+            {
+                // El mecánico SOLO puede modificar el estado de la falla (pendiente, en revisión, resuelta)
+                if (string.IsNullOrWhiteSpace(bitacoraActualizada.EstadoFalla))
+                    return Results.BadRequest("El Estado es obligatorio.");
+
+                bitacora.EstadoFalla = bitacoraActualizada.EstadoFalla;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(bitacoraActualizada.Descripcion) || string.IsNullOrWhiteSpace(bitacoraActualizada.Prioridad) || string.IsNullOrWhiteSpace(bitacoraActualizada.EstadoFalla))
+                    return Results.BadRequest("La Descripción, Prioridad y Estado son obligatorios.");
+
+                bitacora.VehiculoId = bitacoraActualizada.VehiculoId;
+                bitacora.UsuarioId = bitacoraActualizada.UsuarioId;
+                bitacora.FechaReporte = bitacoraActualizada.FechaReporte;
+                bitacora.Descripcion = bitacoraActualizada.Descripcion;
+                bitacora.Prioridad = bitacoraActualizada.Prioridad;
+                bitacora.EstadoFalla = bitacoraActualizada.EstadoFalla;
+            }
 
             await repo.ActualizarAsync(bitacora);
             await repo.GuardarCambiosAsync();
             return Results.Ok(bitacora);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
 
-        // [DELETE] /api/v1/bitacoras/{id} - Eliminar una bitácora por ID
-        bitacoras.MapDelete("/{id}", async (IRepositorio<BitacoraFalla> repo, int id) =>
+        // [DELETE] /api/v1/bitacoras/{id} - Eliminar una bitácora por ID (solo Admin)
+        bitacoras.MapDelete("/{id:int}", async (IRepositorio<BitacoraFalla> repo, int id) =>
         {
             var bitacora = await repo.ObtenerPorIdAsync(id);
             if (bitacora == null)
@@ -73,6 +85,6 @@ public static class BitacoraAPI
             await repo.EliminarAsync(id);
             await repo.GuardarCambiosAsync();
             return Results.Ok("Bitácora eliminada correctamente");
-        });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
     }
 }

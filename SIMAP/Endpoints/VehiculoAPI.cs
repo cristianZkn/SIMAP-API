@@ -15,7 +15,7 @@ public static class VehiculoAPI {
             return Results.Ok(lista);
         });
 
-        // [POST] /api/v1/vehiculos - Crea un nuevo vehículo (solo Admin y Mecánico)
+        // [POST] /api/v1/vehiculos - Crea un nuevo vehículo (solo Admin)
         vehiculos.MapPost("/", async (Vehiculo v, IRepositorio<Vehiculo> repo) =>
         {
             if (string.IsNullOrWhiteSpace(v.Placa) || string.IsNullOrWhiteSpace(v.Marca) || string.IsNullOrWhiteSpace(v.Modelo) || string.IsNullOrWhiteSpace(v.Estado))
@@ -26,7 +26,7 @@ public static class VehiculoAPI {
             await repo.AgregarAsync(v);
             await repo.GuardarCambiosAsync(); // Confirmamos los cambios en la BD
             return Results.Created($"/api/v1/vehiculos/{v.Id}", v);
-        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
         // [GET] /api/v1/vehiculos/{id} - Busca un vehículo específico por su ID
         vehiculos.MapGet("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
@@ -36,7 +36,7 @@ public static class VehiculoAPI {
             return vehiculo is null ? Results.NotFound() : Results.Ok(vehiculo);
         });
 
-        // [PUT] /api/v1/vehiculos/{id} - Modifica por completo un vehículo existente
+        // [PUT] /api/v1/vehiculos/{id} - Modifica por completo un vehículo existente (solo Admin)
         vehiculos.MapPut("/{id:int}", async (int id, Vehiculo v, IRepositorio<Vehiculo> repo) => {
             if (string.IsNullOrWhiteSpace(v.Placa) || string.IsNullOrWhiteSpace(v.Marca) || string.IsNullOrWhiteSpace(v.Modelo) || string.IsNullOrWhiteSpace(v.Estado))
                 return Results.BadRequest("Placa, Marca, Modelo y Estado son obligatorios.");
@@ -57,9 +57,9 @@ public static class VehiculoAPI {
             await repo.ActualizarAsync(vehiculo);
             await repo.GuardarCambiosAsync();
             return Results.Ok(vehiculo);
-        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
-        // [DELETE] /api/v1/vehiculos/{id} - Elimina un vehículo por su ID (solo Admin y Mecánico)
+        // [DELETE] /api/v1/vehiculos/{id} - Elimina un vehículo por su ID (solo Admin)
         vehiculos.MapDelete("/{id:int}", async (int id, IRepositorio<Vehiculo> repo) =>
         {
             var vehiculo = await repo.ObtenerPorIdAsync(id);
@@ -68,6 +68,6 @@ public static class VehiculoAPI {
             await repo.EliminarAsync(id);
             await repo.GuardarCambiosAsync();
             return Results.NoContent(); // 204 No Content indica éxito sin retornar datos
-        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Mecanico"));
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
     }
 }

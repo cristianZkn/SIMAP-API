@@ -24,6 +24,7 @@ test.describe('Flujo Completo de Negocio SIMAP (E2E)', () => {
     await page.getByRole('button', { name: /Iniciar sesión/i }).click()
 
     // 3. Navegación al recurso principal (/vehiculos)
+    await page.getByRole('link', { name: 'Vehículos', exact: true }).click()
     await page.waitForURL('**/vehiculos', { timeout: 6000 })
     await expect(page.getByRole('heading', { level: 1, name: /M[oó]dulo de Gesti[oó]n Automotriz|Parque Automotor/i })).toBeVisible()
 

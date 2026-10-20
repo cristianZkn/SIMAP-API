@@ -13,8 +13,9 @@
 import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { obtenerBitacoras, eliminarBitacora } from './bitacoraService'
+import { obtenerBitacoras, eliminarBitacora, actualizarBitacora } from './bitacoraService'
 import { obtenerVehiculos } from '../vehiculos/vehiculoService'
+import { useAuth } from '../auth/AuthContext'
 import { PRIORIDADES, ESTADOS_FALLA, type BitacoraFalla, type Vehiculo } from '../../shared/types'
 import { Spinner } from '../../shared/components/Spinner'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
@@ -23,6 +24,12 @@ import styles from './Bitacoras.module.css'
 const ELEMENTOS_POR_PAGINA = 8
 
 export function BitacorasListPage() {
+  const { rol } = useAuth()
+  const esAdmin = rol === 'Admin'
+  const esMecanico = rol === 'Mecanico'
+  const puedeReportar = rol === 'Admin' || rol === 'Conductor'
+  const tieneColumnaAcciones = esAdmin || esMecanico
+
   const queryClient = useQueryClient()
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -73,6 +80,27 @@ export function BitacorasListPage() {
     },
     onError: (err: Error) => {
       alert(`Error al eliminar: ${err.message}`)
+    },
+  })
+
+  // Mutación rápida de cambio de estado para Mecánico
+  const mutacionCambiarEstado = useMutation({
+    mutationFn: ({ id, bitacora, nuevoEstado }: { id: number; bitacora: BitacoraFalla; nuevoEstado: string }) =>
+      actualizarBitacora(id, {
+        vehiculoId: bitacora.vehiculoId,
+        usuarioId: bitacora.usuarioId,
+        fechaReporte: bitacora.fechaReporte,
+        descripcion: bitacora.descripcion,
+        prioridad: bitacora.prioridad,
+        estadoFalla: nuevoEstado,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bitacoras'] })
+      setMensajeExito('El estado de la falla ha sido actualizado correctamente.')
+      setTimeout(() => setMensajeExito(null), 4000)
+    },
+    onError: (err: Error) => {
+      alert(`Error al actualizar estado: ${err.message}`)
     },
   })
 
@@ -140,9 +168,11 @@ export function BitacorasListPage() {
             Registro, diagnóstico y seguimiento de incidencias mecánicas reportadas en la flota.
           </p>
         </div>
-        <Link to="/bitacoras/nueva" className={styles.btnNuevo}>
-          Reportar Falla
-        </Link>
+        {puedeReportar && (
+          <Link to="/bitacoras/nueva" className={styles.btnNuevo}>
+            Reportar Falla
+          </Link>
+        )}
       </div>
 
       {/* Mensajes de éxito */}
@@ -236,7 +266,7 @@ export function BitacorasListPage() {
                   <th scope="col">Prioridad</th>
                   <th scope="col">Estado</th>
                   <th scope="col">Fecha de Reporte</th>
-                  <th scope="col">Acciones</th>
+                  {tieneColumnaAcciones && <th scope="col">Acciones</th>}
                 </tr>
               </thead>
               <tbody>
@@ -279,25 +309,59 @@ export function BitacorasListPage() {
                         </span>
                       </td>
                       <td data-label="Fecha de Reporte">{formatearFecha(b.fechaReporte)}</td>
-                      <td data-label="Acciones">
-                        <div className={styles.accionesCol}>
-                          <Link
-                            to={`/bitacoras/${b.id}/editar`}
-                            className={styles.btnEditar}
-                            aria-label={`Editar reporte de falla número ${b.id}`}
-                          >
-                            Editar
-                          </Link>
-                          <button
-                            type="button"
-                            className={styles.btnEliminar}
-                            onClick={() => setBitacoraAEliminar(b)}
-                            aria-label={`Eliminar reporte de falla número ${b.id}`}
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
+                      {tieneColumnaAcciones && (
+                        <td data-label="Acciones">
+                          <div className={styles.accionesCol}>
+                            {esAdmin && (
+                              <>
+                                <Link
+                                  to={`/bitacoras/${b.id}/editar`}
+                                  className={styles.btnEditar}
+                                  aria-label={`Editar reporte de falla número ${b.id}`}
+                                >
+                                  Editar
+                                </Link>
+                                <button
+                                  type="button"
+                                  className={styles.btnEliminar}
+                                  onClick={() => setBitacoraAEliminar(b)}
+                                  aria-label={`Eliminar reporte de falla número ${b.id}`}
+                                >
+                                  Eliminar
+                                </button>
+                              </>
+                            )}
+                            {esMecanico && (
+                              <>
+                                <select
+                                  value={b.estadoFalla.toLowerCase()}
+                                  onChange={(e) =>
+                                    mutacionCambiarEstado.mutate({
+                                      id: b.id,
+                                      bitacora: b,
+                                      nuevoEstado: e.target.value,
+                                    })
+                                  }
+                                  className={styles.selectFiltro}
+                                  style={{ minHeight: '36px', padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                                  aria-label={`Modificar estado de falla número ${b.id}`}
+                                >
+                                  <option value="pendiente">Pendiente</option>
+                                  <option value="en revisión">En revisión</option>
+                                  <option value="resuelta">Resuelta</option>
+                                </select>
+                                <Link
+                                  to={`/bitacoras/${b.id}/editar`}
+                                  className={styles.btnEditar}
+                                  aria-label={`Detalle y estado de falla número ${b.id}`}
+                                >
+                                  Estado
+                                </Link>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   )
                 })}

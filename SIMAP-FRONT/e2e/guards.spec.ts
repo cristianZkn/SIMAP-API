@@ -39,8 +39,12 @@ test.describe('Guards de Seguridad y Protección de Rutas (E2E)', () => {
     await page.getByLabel(/^Contraseña/i).fill(clave)
     await page.getByRole('button', { name: /Iniciar sesión/i }).click()
 
-    // 4. Al iniciar sesión, la app intenta navegar a la raíz (/vehiculos).
+    // Esperar a que la sesión esté iniciada y cargue el panel de control
+    await expect(page.getByRole('heading', { level: 1, name: /Panel de Control/i })).toBeVisible({ timeout: 6000 })
+
+    // 4. Conductor intenta acceder directamente a la ruta protegida /vehiculos (restringida a Admin y Mecánico).
     // El RoleGuard detecta que el usuario tiene rol Conductor y redirige de inmediato a /403
+    await page.goto('/vehiculos')
     await page.waitForURL('**/403', { timeout: 8000 })
     await expect(page).toHaveURL(/\/403/)
     await expect(page.getByText('403')).toBeVisible()

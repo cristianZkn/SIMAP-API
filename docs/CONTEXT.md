@@ -9,7 +9,7 @@
 - **Trabajo 2:** Frontend React + TypeScript, consumo de API RESTful y seguridad integral (cliente y servidor).
 - **Backend:** C# / .NET 10 Minimal APIs con Entity Framework Core (`SIMAP/`), LocalDB SQL Server en `http://localhost:5288`.
 - **Frontend:** React 19 + TypeScript + Vite (`SIMAP-FRONT/`) en `http://localhost:5173`.
-- **Caso de negocio:** **SIMAP** (Sistema de Mantenimiento de Parque Automotor).
+- **Caso de negocio:** **SIMAP** (Sistema de Mantenimiento Preventivo).
   - Recurso principal: `Vehiculo` (placa, marca, modelo, anio, kilometraje, estado).
   - Recursos relacionados: `BitacoraFalla` (reporte de fallas), `Mantenimiento` (orden de taller), `Usuario`, `Rol`.
   - Roles en el sistema: `Admin` (gestiona todo), `Mecanico` (vehículos, bitácoras, mantenimientos), `Conductor` (solo bitácoras).
@@ -98,6 +98,34 @@
 - Creación de [`README.md`](file:///b:/proyectos/SIMAP/README.md) en la raíz del repositorio con guía completa de instalación, ejecución de backend y frontend, credenciales de prueba por rol (`admin@simap.cl`, `mecanico@simap.cl`, `conductor@simap.cl`), comandos de pruebas y mapa documental de enlaces.
 - Actualización completa de [`AI_LOG.md`](file:///b:/proyectos/SIMAP/AI_LOG.md) con el registro integral de herramientas, reflexiones de aprendizaje y métricas de calidad (100% de fases completadas).
 - Cumplimiento de la regla de estilo: Prohibición total de emojis en código, comentarios, títulos y subtítulos.
+
+### Fase 9 — Panel Principal Analítico (Dashboard), Tema Oscuro y Corrección de Tipografía
+- Diseño e implementación de la vista principal analítica en [`src/features/dashboard/DashboardPage.tsx`](file:///b:/proyectos/SIMAP/SIMAP-FRONT/src/features/dashboard/DashboardPage.tsx) y [`Dashboard.module.css`](file:///b:/proyectos/SIMAP/SIMAP-FRONT/src/features/dashboard/Dashboard.module.css):
+  - Gráfico 1: Estado operativo de vehículos (gráfico circular Donut SVG accesible con leyenda detallada).
+  - Gráfico 2: Distribución de marcas de vehículos con barras horizontales de progreso.
+  - Gráfico 3: Clasificación de bitácoras de fallas por nivel de prioridad (Crítica, Alta, Media, Baja).
+  - Tarjetas de indicadores clave (KPIs) ejecutivas para flota vehicular, disponibilidad, vehículos en taller e incidencias activas.
+  - Sección de accesos rápidos de operación según rol autenticado.
+- Corrección de colisión y sobreposición de fuentes en el gráfico Donut: desacoplamiento del número y rótulo hacia un contenedor HTML absoluto centrado (`.donutCentroHtml`), eliminando colisiones de coordenadas SVG con rotación de texto.
+- Corrección de ancho y quiebre de línea en la leyenda del gráfico Donut: reestructuración en disposición vertical con separador sutil y filas a ancho completo (`.itemLeyenda`), garantizando espacio holgado y legibilidad sin quiebres de texto.
+- Implementación de un tema visual oscuro sobrio y de alta gama inspirado en la ingeniería del repositorio ECC:
+  - Tokens globales en [`src/index.css`](file:///b:/proyectos/SIMAP/SIMAP-FRONT/src/index.css): fondo `--color-bg: #090d16`, tarjetas `--color-card: #0f172a`, bordes `--color-border: #1e293b`, textos `--color-text: #f8fafc` y `--color-text-muted: #94a3b8`.
+  - Eliminación total de fondos blancos residuales (`#ffffff`) en tablas, filtros, modales, formularios y páginas de error.
+  - Estandarización de badges semánticos translúcidos con contraste WCAG 2.2 AA.
+- Estandarización de nomenclatura oficial: "SIMAP — Sistema de Mantenimiento Preventivo".
+
+### Fase 10 — Ajuste Estricto de Roles y Permisos (RBAC Negocio: Mecánico y Conductor)
+- **Resolución de problemas de roles según reglas de negocio:**
+  - **Mecánico:** Puede visualizar la flota de vehículos y las bitácoras de fallas. No puede modificar vehículos (no tiene botones de crear, editar o eliminar vehículos, ni acceso a rutas `/vehiculos/nuevo` o `/vehiculos/:id/editar`). No puede eliminar bitácoras ni alterar la descripción o vehículo reportado; **únicamente puede modificar el estado de la falla** (`pendiente`, `en revisión`, `resuelta`), tanto de forma rápida desde la tabla como en el formulario de edición donde los demás campos están deshabilitados.
+  - **Conductor:** Puede visualizar el panel de control y las bitácoras de fallas sin bloqueos 403. Puede reportar nuevas incidencias mecánicas (`/bitacoras/nueva`), seleccionando dinámicamente cualquier vehículo de la flota vía `GET /api/v1/vehiculos` y creando el reporte con `POST /api/v1/bitacoras`. No tiene acceso a la gestión de vehículos ni a la edición o eliminación de registros ajenos.
+  - **Administrador:** Mantiene acceso total de creación, lectura, actualización y eliminación sobre todos los recursos del sistema.
+- **Hardening en Backend (`VehiculoAPI.cs` y `BitacoraAPI.cs`):**
+  - `POST /vehiculos`, `PUT /vehiculos/{id}`, `DELETE /vehiculos/{id}`: restringidos estrictamente a `RequireRole("Admin")`.
+  - `GET /vehiculos`: permitido para `Admin`, `Mecanico` y `Conductor` (necesario para reporte de fallas y visualización).
+  - `POST /bitacoras`: restringido a `RequireRole("Admin", "Conductor")`.
+  - `PUT /bitacoras/{id}`: `RequireRole("Admin", "Mecanico")`. En el handler, si el usuario es `Mecanico`, el servidor fuerza la inmutabilidad de los campos descriptivos y actualiza **únicamente** `EstadoFalla`.
+  - `DELETE /bitacoras/{id}`: restringido estrictamente a `RequireRole("Admin")`.
+- **Validación automatizada:** Suite de pruebas E2E en [`e2e/roles-permisos.spec.ts`](file:///b:/proyectos/SIMAP/SIMAP-FRONT/e2e/roles-permisos.spec.ts) validando que el Conductor reporta fallas con vehículo asignado sin 403, y que el Mecánico visualiza sin botones de alteración vehicular ni de borrado. (5 de 5 pruebas Playwright aprobadas al 100%).
 
 
 

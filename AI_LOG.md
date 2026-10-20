@@ -137,6 +137,24 @@
 - **Verificación real:** Todos los documentos redactados en formato markdown profesional, estructurados semánticamente y validados sin presencia de emojis en codigo, comentarios, titulos ni subtitulos.
 - **Entregables generados:** `docs/INFORME_TECNICO.md`, `docs/DEMO_GUIDE.md`, `README.md`, `docs/CONTEXT.md`, `AI_LOG.md`.
 
+### Fase 9 — Panel Principal Analítico (Dashboard), Tema Oscuro y Tipografía
+- **Objetivo:** Incorporar panel analítico con métricas en tiempo real de la flota, distribución de marcas y bitácoras según prioridad; aplicar un tema oscuro sobrio y de alta gama inspirado en el repositorio ECC (`affaan-m/ECC`), y corregir la sobreposición tipográfica en el gráfico Donut de vehículos.
+- **Prompts y acciones:**
+  1. *Panel Analítico (`DashboardPage.tsx`):* Creación de 4 tarjetas KPI (flota total, disponibilidad %, vehículos en mantenimiento, incidencias activas), gráfico de barras para marcas de la flota, desglose de incidencias por severidad (Crítica, Alta, Media, Baja) y accesos directos por rol.
+  2. *Corrección del Gráfico Donut de Vehículos:* Desacoplamiento del número y rótulo hacia un contenedor HTML absoluto centrado (`.donutCentroHtml`), eliminando colisiones de coordenadas SVG con rotación de texto. Reestructuración de la leyenda con filas a ancho completo (`.itemLeyenda`), asegurando espacio holgado sin quiebres de texto.
+  3. *Eliminación de Fondos Blancos y Adopción de Tema Oscuro:* Sustitución de fondos `#ffffff` residuales en tablas, filtros, modales y formularios por variables semánticas (`--color-bg: #090d16`, `--color-card: #0f172a`, `--color-border: #1e293b`).
+  4. *Estandarización de Marca:* Cambio de "Parque Automotor" por "Sistema de Mantenimiento Preventivo" en toda la documentación y encabezados.
+- **Verificación real:** Pruebas visuales E2E con Playwright capturaron captura de pantalla completa en `dashboard_dark_theme.png` comprobando cero solapamiento y armonía estética de alto nivel.
+
+### Fase 10 — Ajuste Estricto de Roles y Permisos (RBAC Negocio: Mecánico y Conductor)
+- **Objetivo:** Ajustar el sistema de permisos para que el Mecánico únicamente pueda visualizar vehículos y bitácoras y modificar exclusivamente el estado de la falla, y para que el Conductor pueda reportar fallas seleccionando vehículos de la flota sin bloqueos 403.
+- **Prompts y acciones:**
+  1. *Backend (`VehiculoAPI.cs`):* Restricción de `POST`, `PUT` y `DELETE /vehiculos` únicamente a `Admin`. Inclusión de `Conductor` en `GET /vehiculos` para lectura de flota al crear reportes.
+  2. *Backend (`BitacoraAPI.cs`):* Restricción de `POST /bitacoras` a `Admin` y `Conductor`. Restricción de `DELETE /bitacoras` a `Admin`. En `PUT /bitacoras/{id}`, el servidor verifica si el rol es `Mecanico` y en dicho caso únicamente actualiza `EstadoFalla`, preservando los demás datos inmutables.
+  3. *Frontend (`VehiculosListPage.tsx` y `App.tsx`):* El Mecánico puede ver la flota, pero no ve botones de registrar, editar ni eliminar vehículos.
+  4. *Frontend (`BitacorasListPage.tsx` y `BitacoraFormPage.tsx`):* El Conductor puede reportar fallas (`/bitacoras/nueva`). El Mecánico no ve botón de reportar ni de eliminar; puede actualizar el estado directamente desde la tabla o en el formulario donde los campos descriptivos quedan deshabilitados.
+- **Verificación real:** 5 / 5 pruebas E2E aprobadas en Playwright en 16.0s (`e2e/flujo-completo.spec.ts`, `e2e/guards.spec.ts` y `e2e/roles-permisos.spec.ts`).
+
 ---
 
 ## 3. Estado Final del Proyecto y Metricas de Calidad
@@ -147,11 +165,11 @@ Todas las fases establecidas en el plan de trabajo se encuentran al 100% complet
 |---|---|---|
 | Pruebas Unitarias e Integracion (Vitest) | 14 / 14 aprobadas (100%) | Superior al 80% requerido |
 | Cobertura de Codigo en Seguridad (v8) | 100% en componentes criticos | Cumplimiento total |
-| Pruebas End-to-End (Playwright Chromium) | 3 / 3 aprobadas (100%) | Flujo completo y guards validados |
+| Pruebas End-to-End (Playwright Chromium) | 5 / 5 aprobadas (100%) | Flujo completo, guards y roles validados |
 | Auditoria de Seguridad Automatizada OWASP | 11 / 11 controles aprobados (100%) | OWASP API Security Top 10 |
 | Accesibilidad Web (WCAG 2.2 AA) | Conforme (teclado, NVDA, contraste) | Ratios de contraste > 4.5:1 / 3:1 |
 | Diseno Responsivo Mobile-First | Conforme (320px a 1440px sin scroll h.) | Mobile-First responsive |
-| Linter Estatico de Codigo (Oxlint con jsx-a11y) | 0 errores, 0 advertencias (34 archivos) | Codigo limpio |
+| Linter Estatico de Codigo (Oxlint con jsx-a11y) | 0 errores, 0 advertencias (35 archivos) | Codigo limpio |
 | Tipado TypeScript (`tsc --noEmit`) | 0 errores de compilacion | Modo estricto |
 
 ---

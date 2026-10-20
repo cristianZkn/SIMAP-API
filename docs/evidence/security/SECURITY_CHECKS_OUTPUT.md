@@ -1,6 +1,6 @@
 # Reporte de Ejecucion de Pruebas de Seguridad Automatizadas — SIMAP
 
-**Fecha de Ejecucion:** 2026-10-20T03:59:52.308Z
+**Fecha de Ejecucion:** 2026-10-20T06:51:09.159Z
 **Servidor Evaluado:** http://localhost:5288/api/v1
 **Total de Controles Evaluados:** 11
 **Controles Exitosos:** 11

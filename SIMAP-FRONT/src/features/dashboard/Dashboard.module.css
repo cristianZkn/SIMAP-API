@@ -1,0 +1,411 @@
+.contenedor {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Encabezado del panel */
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.25rem;
+}
+
+.titulo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+  margin-bottom: 0.25rem;
+}
+
+.subtitulo {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* Grid de métricas KPI */
+.gridKpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.kpiCard {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpiEtiqueta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.kpiValor {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.1;
+  margin-bottom: 0.35rem;
+}
+
+.kpiDetalle {
+  font-size: 0.825rem;
+  color: var(--color-text-muted);
+}
+
+.kpiDetallePositivo {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.kpiDetalleAlerta {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* Grid de Gráficos principales */
+.gridGraficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.graficoCard {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.graficoEncabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+}
+
+.graficoTitulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.graficoSubtitulo {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Gráfico 1: Donut de estado */
+.donutContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.donutWrapper {
+  position: relative;
+  width: 165px;
+  height: 165px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0.5rem auto 0;
+}
+
+.svgDonut {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donutCentroHtml {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  width: 90px;
+}
+
+.donutNumero {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  margin: 0;
+  padding: 0;
+}
+
+.donutSubtexto {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.leyendaDonut {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.itemLeyenda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.itemLeyendaEtiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.itemLeyendaValor {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.indicadorColor {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Gráfico 2: Barras de Marcas */
+.listaBarras {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.itemBarra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoBarra {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.conteobarrita {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.pistaBarra {
+  width: 100%;
+  height: 10px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.rellenoBarra {
+  height: 100%;
+  background: linear-gradient(90deg, #1e40af, #3b82f6);
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+/* Gráfico 3: Prioridad de Bitácoras */
+.gridPrioridades {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+.tarjetaPrioridad {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metaPrioridad {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.badgePill {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.prioridadCritica {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.prioridadAlta {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+.prioridadMedia {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.prioridadBaja {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+/* Acciones rápidas y tabla reciente */
+.seccionAcciones {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.accionesBotones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btnAccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 44px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btnAccionPrimario {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: 1px solid var(--color-primary);
+}
+
+.btnAccionPrimario:hover {
+  background-color: var(--color-primary-hover);
+  text-decoration: none;
+}
+
+.btnAccionSecundario {
+  background-color: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btnAccionSecundario:hover {
+  background-color: var(--color-bg);
+  border-color: #475569;
+  text-decoration: none;
+}
+
+/* Estados de carga y error */
+.centrado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  gap: 1rem;
+  text-align: center;
+}
+
+.alertaError {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.btnReintentar {
+  margin-top: 0.75rem;
+  background-color: var(--color-danger);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}

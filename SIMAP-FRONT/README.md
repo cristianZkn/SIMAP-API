@@ -2,7 +2,7 @@
 
 > **Trabajo 2: Frontend, consumo de API y seguridad**  
 > Asignatura: Lenguaje de Programación Web II (UT2)  
-> Dominio: Sistema de Mantenimiento de Parque Automotor (SIMAP)
+> Dominio: Sistema de Mantenimiento Preventivo (SIMAP)
 
 ---
 

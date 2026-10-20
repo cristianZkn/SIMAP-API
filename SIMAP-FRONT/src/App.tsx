@@ -1,9 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { Layout } from './app/Layout'
 import { ProtectedRoute } from './features/auth/ProtectedRoute'
 import { RoleGuard } from './features/auth/RoleGuard'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
+import { DashboardPage } from './features/dashboard/DashboardPage'
 import { VehiculosListPage } from './features/vehiculos/VehiculosListPage'
 import { VehiculoFormPage } from './features/vehiculos/VehiculoFormPage'
 import { BitacorasListPage } from './features/bitacoras/BitacorasListPage'
@@ -17,7 +18,8 @@ import { ForbiddenPage } from './pages/ForbiddenPage'
  * Estructura de rutas:
  * - /login              → pública (sin sesión)
  * - /registro           → pública (sin sesión)
- * - /vehiculos          → protegida, solo Admin y Mecanico
+ * - /                   → protegida, Dashboard principal con métricas y gráficos
+ * - /vehiculos          → protegida, solo Admin y Mecánico
  * - /bitacoras          → protegida, todos los roles
  * - /403                → página de acceso denegado
  * - /*                  → 404 Not Found
@@ -32,20 +34,28 @@ function App() {
       {/* Rutas protegidas: requieren sesión activa */}
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
-          {/* Redirige la raíz a vehículos */}
-          <Route path="/" element={<Navigate to="/vehiculos" replace />} />
+          {/* Panel principal accesible para todos los roles autenticados */}
+          <Route path="/" element={<DashboardPage />} />
 
-          {/* Vehículos: solo Admin y Mecánico */}
+          {/* Vehículos: Admin y Mecánico visualizan; solo Admin crea y edita */}
           <Route element={<RoleGuard rolesPermitidos={['Admin', 'Mecanico']} />}>
             <Route path="/vehiculos" element={<VehiculosListPage />} />
+          </Route>
+          <Route element={<RoleGuard rolesPermitidos={['Admin']} />}>
             <Route path="/vehiculos/nuevo" element={<VehiculoFormPage />} />
             <Route path="/vehiculos/:id/editar" element={<VehiculoFormPage />} />
           </Route>
 
-          {/* Bitácoras: Admin, Mecánico y Conductor */}
+          {/* Bitácoras: Admin, Mecánico y Conductor visualizan el listado */}
           <Route element={<RoleGuard rolesPermitidos={['Admin', 'Mecanico', 'Conductor']} />}>
             <Route path="/bitacoras" element={<BitacorasListPage />} />
+          </Route>
+          {/* Reportar fallas: Admin y Conductor */}
+          <Route element={<RoleGuard rolesPermitidos={['Admin', 'Conductor']} />}>
             <Route path="/bitacoras/nueva" element={<BitacoraFormPage />} />
+          </Route>
+          {/* Edición de bitácoras: Admin (completo) y Mecánico (solo estado) */}
+          <Route element={<RoleGuard rolesPermitidos={['Admin', 'Mecanico']} />}>
             <Route path="/bitacoras/:id/editar" element={<BitacoraFormPage />} />
           </Route>
         </Route>

@@ -14,6 +14,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { obtenerVehiculos, eliminarVehiculo } from './vehiculoService'
 import { ESTADOS_VEHICULO, type Vehiculo } from '../../shared/types'
+import { useAuth } from '../auth/AuthContext'
 import { Spinner } from '../../shared/components/Spinner'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import styles from './Vehiculos.module.css'
@@ -21,6 +22,8 @@ import styles from './Vehiculos.module.css'
 const ELEMENTOS_POR_PAGINA = 8
 
 export function VehiculosListPage() {
+  const { rol } = useAuth()
+  const esAdmin = rol === 'Admin'
   const queryClient = useQueryClient()
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -109,9 +112,11 @@ export function VehiculosListPage() {
             Gestión y seguimiento de los vehículos operativos en la flota.
           </p>
         </div>
-        <Link to="/vehiculos/nuevo" className={styles.btnNuevo}>
-          Registrar Vehículo
-        </Link>
+        {esAdmin && (
+          <Link to="/vehiculos/nuevo" className={styles.btnNuevo}>
+            Registrar Vehículo
+          </Link>
+        )}
       </div>
 
       {/* Región de mensajes en vivo (Accesibilidad) */}
@@ -187,7 +192,7 @@ export function VehiculosListPage() {
                   <th scope="col">Año</th>
                   <th scope="col">Kilometraje</th>
                   <th scope="col">Estado</th>
-                  <th scope="col">Acciones</th>
+                  {esAdmin && <th scope="col">Acciones</th>}
                 </tr>
               </thead>
               <tbody>
@@ -214,25 +219,27 @@ export function VehiculosListPage() {
                         {v.estado}
                       </span>
                     </td>
-                    <td data-label="Acciones">
-                      <div className={styles.accionesCol}>
-                        <Link
-                          to={`/vehiculos/${v.id}/editar`}
-                          className={styles.btnEditar}
-                          aria-label={`Editar vehículo placa ${v.placa}`}
-                        >
-                          Editar
-                        </Link>
-                        <button
-                          type="button"
-                          className={styles.btnEliminar}
-                          onClick={() => setVehiculoAEliminar(v)}
-                          aria-label={`Eliminar vehículo placa ${v.placa}`}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
+                    {esAdmin && (
+                      <td data-label="Acciones">
+                        <div className={styles.accionesCol}>
+                          <Link
+                            to={`/vehiculos/${v.id}/editar`}
+                            className={styles.btnEditar}
+                            aria-label={`Editar vehículo placa ${v.placa}`}
+                          >
+                            Editar
+                          </Link>
+                          <button
+                            type="button"
+                            className={styles.btnEliminar}
+                            onClick={() => setVehiculoAEliminar(v)}
+                            aria-label={`Eliminar vehículo placa ${v.placa}`}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

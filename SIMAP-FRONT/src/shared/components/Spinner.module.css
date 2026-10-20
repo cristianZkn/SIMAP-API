@@ -1,4 +1,4 @@
-/* Spinner.module.css */
+/* Spinner.module.css (Dark Theme) */
 
 .spinnerWrapper {
   display: flex;
@@ -12,15 +12,15 @@
 .spinner {
   width: 36px;
   height: 36px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #2563eb;
+  border: 3px solid var(--color-border, #1e293b);
+  border-top-color: var(--color-primary, #3b82f6);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 .text {
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--color-text-muted, #94a3b8);
 }
 
 @keyframes spin {

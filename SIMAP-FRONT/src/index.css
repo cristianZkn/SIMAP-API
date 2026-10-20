@@ -1,24 +1,39 @@
 /* index.css — Estilos globales y tokens del sistema de diseño de SIMAP */
 
 :root {
-  --color-primary: #1e40af;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #eff6ff;
-  --color-text: #1e293b;
-  --color-text-muted: #475569;
-  --color-bg: #f8fafc;
-  --color-card: #ffffff;
-  --color-border: #e2e8f0;
-  --color-danger: #b91c1c;
-  --color-danger-bg: #fef2f2;
-  --color-success: #15803d;
-  --color-success-bg: #f0fdf4;
-  --color-warning: #92400e;
-  --color-warning-bg: #fffbeb;
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  
+  /* Paleta moderna, oscura y elegante (Dark Mode de Alta Gama) */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+  --color-primary-light: rgba(59, 130, 246, 0.15);
+  
+  /* Textos y fondos oscuros elegantes */
+  --color-bg: #090d16;
+  --color-card: #0f172a;
+  --color-border: #1e293b;
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+  
+  /* Superficie oscura elegante para navegación y componentes premium */
+  --color-dark-surface: #0b0f19;
+  --color-dark-surface-hover: #1e293b;
+  --color-dark-border: #1e293b;
+  --color-dark-text: #f8fafc;
+  --color-dark-muted: #94a3b8;
+  
+  /* Semánticas de estado WCAG 2.2 sobre fondo oscuro */
+  --color-danger: #ef4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-success: #22c55e;
+  --color-success-bg: rgba(34, 197, 94, 0.15);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
 
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  /* Sombras sutiles y refinadas */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -34,18 +49,22 @@ html {
   color: var(--color-text);
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg);
 }
 
 /* Enlace accesible para saltar navegacion con teclado (WCAG 2.2 AA) */
@@ -53,7 +72,7 @@ body {
   position: absolute;
   top: -100px;
   left: 1rem;
-  background-color: var(--color-primary);
+  background-color: var(--color-dark-surface);
   color: #ffffff;
   padding: 0.75rem 1.25rem;
   font-weight: 600;
@@ -62,11 +81,12 @@ body {
   border-radius: 0 0 6px 6px;
   text-decoration: none;
   transition: top 0.2s ease;
+  border: 1px solid var(--color-primary);
 }
 
 .skip-link:focus {
   top: 0;
-  outline: 3px solid #facc15;
+  outline: 3px solid #38bdf8;
   outline-offset: 2px;
 }
 
@@ -99,6 +119,6 @@ a:hover {
   outline-offset: 2px;
 }
 
-button {
+button, input, select, textarea {
   font-family: inherit;
 }

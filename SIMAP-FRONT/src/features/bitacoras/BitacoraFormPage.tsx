@@ -39,9 +39,10 @@ export function BitacoraFormPage() {
   const { id } = useParams<{ id?: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { usuario } = useAuth()
+  const { usuario, rol } = useAuth()
   const esEdicion = Boolean(id)
   const bitacoraId = id ? parseInt(id, 10) : 0
+  const esMecanico = rol === 'Mecanico'
 
   const [errorServidor, setErrorServidor] = useState<string | null>(null)
 
@@ -89,11 +90,11 @@ export function BitacoraFormPage() {
   const mutacionGuardar = useMutation({
     mutationFn: async (datos: BitacoraFormData) => {
       const payload = {
-        vehiculoId: datos.vehiculoId,
-        usuarioId: usuario?.id ?? 1,
+        vehiculoId: esMecanico && bitacoraExistente ? bitacoraExistente.vehiculoId : datos.vehiculoId,
+        usuarioId: esEdicion && bitacoraExistente ? bitacoraExistente.usuarioId : (usuario?.id ?? 1),
         fechaReporte: esEdicion && bitacoraExistente ? bitacoraExistente.fechaReporte : new Date().toISOString(),
-        descripcion: datos.descripcion,
-        prioridad: datos.prioridad,
+        descripcion: esMecanico && bitacoraExistente ? bitacoraExistente.descripcion : datos.descripcion,
+        prioridad: esMecanico && bitacoraExistente ? bitacoraExistente.prioridad : datos.prioridad,
         estadoFalla: datos.estadoFalla,
       }
 
@@ -128,10 +129,16 @@ export function BitacoraFormPage() {
       <div className={styles.encabezadoSeccion}>
         <div>
           <h1 className={styles.titulo}>
-            {esEdicion ? `Actualizar Falla #${bitacoraId}` : 'Reportar Falla Mecánica'}
+            {esMecanico
+              ? `Actualizar Estado de Falla #${bitacoraId}`
+              : esEdicion
+              ? `Actualizar Falla #${bitacoraId}`
+              : 'Reportar Falla Mecánica'}
           </h1>
           <p className={styles.subtitulo}>
-            {esEdicion
+            {esMecanico
+              ? 'Como mecánico responsable, actualice el estado operativo de la incidencia (pendiente, en revisión, resuelta).'
+              : esEdicion
               ? 'Modifique el diagnóstico, prioridad o estado del reporte de falla.'
               : 'Seleccione la unidad afectada e indique el detalle de la incidencia observada.'}
           </p>
@@ -151,6 +158,7 @@ export function BitacoraFormPage() {
             <label htmlFor="vehiculoId">Vehículo asignado</label>
             <select
               id="vehiculoId"
+              disabled={esMecanico}
               aria-required="true"
               aria-describedby={errors.vehiculoId ? 'vehiculoId-error' : undefined}
               aria-invalid={!!errors.vehiculoId}
@@ -176,6 +184,7 @@ export function BitacoraFormPage() {
             <textarea
               id="descripcion"
               rows={4}
+              disabled={esMecanico}
               placeholder="Describa el problema observado (ruidos anormales, pérdida de potencia, frenado, etc.)..."
               aria-required="true"
               aria-describedby={errors.descripcion ? 'descripcion-error' : undefined}
@@ -194,6 +203,7 @@ export function BitacoraFormPage() {
             <label htmlFor="prioridad">Nivel de prioridad</label>
             <select
               id="prioridad"
+              disabled={esMecanico}
               aria-required="true"
               aria-describedby={errors.prioridad ? 'prioridad-error' : undefined}
               aria-invalid={!!errors.prioridad}
@@ -243,6 +253,8 @@ export function BitacoraFormPage() {
             >
               {isSubmitting || mutacionGuardar.isPending
                 ? 'Guardando...'
+                : esMecanico
+                ? 'Guardar Estado'
                 : esEdicion
                 ? 'Actualizar Falla'
                 : 'Reportar Falla'}

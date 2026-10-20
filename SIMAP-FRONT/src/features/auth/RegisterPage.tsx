@@ -77,7 +77,7 @@ export function RegisterPage() {
     <div className={styles.contenedor}>
       <main id="contenido-principal" className={styles.tarjeta}>
         <h1 className={styles.titulo}>Crear Cuenta</h1>
-        <p className={styles.subtitulo}>Registro de usuario en SIMAP</p>
+        <p className={styles.subtitulo}>SIMAP — Sistema de Mantenimiento Preventivo</p>
 
         {registroExitoso && (
           <output aria-live="polite" className={styles.alertaExito}>

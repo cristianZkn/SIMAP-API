@@ -1,4 +1,4 @@
-/* Bitacoras.module.css — Estilos para listado y formularios de bitácora de fallas */
+/* Bitacoras.module.css — Estilos para listado y formularios de bitácora de fallas (Dark Theme) */
 
 .contenedor {
   display: flex;
@@ -17,12 +17,13 @@
 .titulo {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
 }
 
 .subtitulo {
   font-size: 0.9375rem;
-  color: #475569;
+  color: var(--color-text-muted);
   margin-top: 0.25rem;
 }
 
@@ -35,14 +36,14 @@
   font-size: 0.9375rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #1e40af;
+  background-color: var(--color-primary);
   border-radius: 6px;
   text-decoration: none;
   transition: background-color 0.15s ease;
 }
 
 .btnNuevo:hover {
-  background-color: #1d4ed8;
+  background-color: var(--color-primary-hover);
   text-decoration: none;
 }
 
@@ -56,15 +57,15 @@
 }
 
 .alertaExito {
-  background-color: #f0fdf4;
-  border: 1px solid #86efac;
-  color: #166534;
+  background-color: var(--color-success-bg);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ade80;
 }
 
 .alertaError {
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
+  background-color: var(--color-danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
 }
 
 .barraFiltros {
@@ -72,10 +73,11 @@
   gap: 1rem;
   flex-wrap: wrap;
   align-items: flex-end;
-  background-color: #ffffff;
+  background-color: var(--color-card);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .grupoFiltro {
@@ -89,25 +91,34 @@
 .grupoFiltro label {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--color-text-muted);
 }
 
 .inputFiltro,
 .selectFiltro {
   min-height: 42px;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.9375rem;
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.inputFiltro:focus,
+.selectFiltro:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .tablaWrapper {
-  background-color: #ffffff;
+  background-color: var(--color-card);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   overflow-x: auto;
+  box-shadow: var(--shadow-sm);
 }
 
 .tablaWrapper:focus-visible {
@@ -123,23 +134,23 @@
 }
 
 .tabla th {
-  background-color: #f8fafc;
+  background-color: rgba(15, 23, 42, 0.95);
   padding: 0.875rem 1rem;
   font-weight: 600;
-  color: #334155;
-  border-bottom: 1px solid #e2e8f0;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
 }
 
 .tabla td {
   padding: 0.875rem 1rem;
-  border-bottom: 1px solid #f1f5f9;
-  color: #1e293b;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
   vertical-align: middle;
 }
 
 .tabla tr:hover td {
-  background-color: #f8fafc;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .badgePrioridad {
@@ -154,21 +165,21 @@
 }
 
 .prioridadAlta {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .prioridadMedia {
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fde68a;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .prioridadBaja {
-  background-color: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
 }
 
 .badgeEstado {
@@ -181,18 +192,21 @@
 }
 
 .estadoPendiente {
-  background-color: #ffedd5;
-  color: #9a3412;
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.35);
 }
 
 .estadoRevision {
-  background-color: #eff6ff;
-  color: #1d4ed8;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
 }
 
 .estadoResuelta {
-  background-color: #f0fdf4;
-  color: #15803d;
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
 }
 
 .accionesCol {
@@ -206,18 +220,19 @@
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1e40af;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
+  color: #93c5fd;
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
   border-radius: 4px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s ease;
 }
 
 .btnEditar:hover {
-  background-color: #dbeafe;
+  background-color: rgba(59, 130, 246, 0.28);
   text-decoration: none;
 }
 
@@ -226,18 +241,19 @@
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #b91c1c;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  color: #fca5a5;
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s ease;
 }
 
 .btnEliminar:hover {
-  background-color: #fee2e2;
+  background-color: rgba(239, 68, 68, 0.28);
 }
 
 .paginacion {
@@ -251,7 +267,7 @@
 
 .infoPaginacion {
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--color-text-muted);
 }
 
 .botonesPaginacion {
@@ -263,42 +279,43 @@
   min-height: 40px;
   min-width: 40px;
   padding: 0.5rem 0.875rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background-color: #ffffff;
-  color: #334155;
+  background-color: var(--color-card);
+  color: var(--color-text);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .btnPagina:hover:not(:disabled) {
-  background-color: #f1f5f9;
+  background-color: var(--color-bg);
 }
 
 .btnPagina:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .estadoVacio {
   text-align: center;
   padding: 3rem 1rem;
-  background-color: #ffffff;
+  background-color: var(--color-card);
   border-radius: 8px;
-  border: 1px dashed #cbd5e1;
-  color: #475569;
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
 }
 
 /* Tarjeta Formulario */
 .tarjetaFormulario {
-  background-color: #ffffff;
+  background-color: var(--color-card);
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   padding: 2rem;
   max-width: 680px;
   margin: 0 auto;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .campo {
@@ -311,7 +328,7 @@
 .campo label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text);
 }
 
 .campo input,
@@ -319,11 +336,21 @@
 .campo textarea {
   min-height: 44px;
   padding: 0.625rem 0.875rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.9375rem;
-  color: #0f172a;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .campo textarea {
@@ -334,13 +361,13 @@
 .campo input[aria-invalid="true"],
 .campo select[aria-invalid="true"],
 .campo textarea[aria-invalid="true"] {
-  border-color: #dc2626;
-  background-color: #fffaf0;
+  border-color: var(--color-danger);
+  background-color: rgba(239, 68, 68, 0.08);
 }
 
 .errorCampo {
   font-size: 0.8125rem;
-  color: #b91c1c;
+  color: #f87171;
   font-weight: 500;
 }
 
@@ -357,14 +384,19 @@
   padding: 0.625rem 1.25rem;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #334155;
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  color: var(--color-text);
+  background-color: var(--color-dark-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.btnCancelar:hover {
+  background-color: var(--color-dark-surface-hover);
 }
 
 .btnGuardar {
@@ -373,7 +405,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #1e40af;
+  background-color: var(--color-primary);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -381,7 +413,7 @@
 }
 
 .btnGuardar:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: var(--color-primary-hover);
 }
 
 .btnGuardar:disabled {
@@ -405,8 +437,8 @@
 
   .tabla tr {
     margin-bottom: 1rem;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 0.5rem;
   }
@@ -417,13 +449,13 @@
     align-items: center;
     text-align: right;
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .tabla td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #475569;
+    color: var(--color-text-muted);
     text-align: left;
     margin-right: 1rem;
   }

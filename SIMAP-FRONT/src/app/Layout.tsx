@@ -54,6 +54,17 @@ export function Layout() {
 
           <nav aria-label="Navegación principal">
             <ul className={styles.navLinks}>
+              <li>
+                <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                    isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
+                  }
+                >
+                  Inicio
+                </NavLink>
+              </li>
               {puedeVerVehiculos && (
                 <li>
                   <NavLink
