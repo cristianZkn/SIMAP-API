@@ -3,6 +3,7 @@ import { Layout } from './app/Layout'
 import { ProtectedRoute } from './features/auth/ProtectedRoute'
 import { RoleGuard } from './features/auth/RoleGuard'
 import { LoginPage } from './features/auth/LoginPage'
+import { RegisterPage } from './features/auth/RegisterPage'
 import { VehiculosListPage } from './features/vehiculos/VehiculosListPage'
 import { VehiculoFormPage } from './features/vehiculos/VehiculoFormPage'
 import { BitacorasListPage } from './features/bitacoras/BitacorasListPage'
@@ -15,6 +16,7 @@ import { ForbiddenPage } from './pages/ForbiddenPage'
  * 
  * Estructura de rutas:
  * - /login              → pública (sin sesión)
+ * - /registro           → pública (sin sesión)
  * - /vehiculos          → protegida, solo Admin y Mecanico
  * - /bitacoras          → protegida, todos los roles
  * - /403                → página de acceso denegado
@@ -23,8 +25,9 @@ import { ForbiddenPage } from './pages/ForbiddenPage'
 function App() {
   return (
     <Routes>
-      {/* Ruta pública: login */}
+      {/* Rutas públicas: login y registro */}
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/registro" element={<RegisterPage />} />
 
       {/* Rutas protegidas: requieren sesión activa */}
       <Route element={<ProtectedRoute />}>

@@ -29,16 +29,35 @@ interface AuthContextValue extends AuthState {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+/** Valida si un JWT ha expirado leyendo su claim exp (en segundos). */
+function isTokenExpired(token: string): boolean {
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return true
+    // atob decodifica la sección payload en base64 del JWT
+    const payload = JSON.parse(atob(parts[1]))
+    if (!payload.exp) return false
+    return Date.now() >= payload.exp * 1000
+  } catch {
+    return true
+  }
+}
+
 /** Carga el estado inicial desde sessionStorage para sobrevivir recargas de página. */
 function cargarEstadoInicial(): AuthState {
   try {
     const token = sessionStorage.getItem('simap_token')
     const usuarioJson = sessionStorage.getItem('simap_usuario')
     if (token && usuarioJson) {
+      if (isTokenExpired(token)) {
+        sessionStorage.removeItem('simap_token')
+        sessionStorage.removeItem('simap_usuario')
+        return { token: null, usuario: null }
+      }
       return { token, usuario: JSON.parse(usuarioJson) as UsuarioDto }
     }
   } catch {
-    // Si el JSON está corrupto, limpiamos
+    // Si el JSON o token está corrupto, limpiamos
     sessionStorage.removeItem('simap_token')
     sessionStorage.removeItem('simap_usuario')
   }

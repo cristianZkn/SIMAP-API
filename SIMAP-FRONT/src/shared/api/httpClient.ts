@@ -59,14 +59,18 @@ httpClient.interceptors.response.use(
   // Error HTTP: lo normalizamos
   (error: AxiosError) => {
     const status = error.response?.status ?? 0
+    const esPeticionLogin = error.config?.url?.includes('/auth/login')
 
-    // 401 — Sin sesión o token expirado: limpiamos y redirigimos al login
+    // 401 — Sin sesión o token expirado en una ruta protegida
     if (status === 401) {
       sessionStorage.removeItem('simap_token')
       sessionStorage.removeItem('simap_usuario')
-      // Guardamos la ruta actual para redirigir después del login
-      const rutaActual = window.location.pathname
-      window.location.href = `/login?retorno=${encodeURIComponent(rutaActual)}`
+
+      // Solo redirigir si el 401 NO provino del propio formulario de login
+      if (!esPeticionLogin && !window.location.pathname.startsWith('/login')) {
+        const rutaActual = window.location.pathname + window.location.search
+        window.location.href = `/login?retorno=${encodeURIComponent(rutaActual)}`
+      }
     }
 
     // 403 — Acceso denegado por rol insuficiente
@@ -87,8 +91,15 @@ httpClient.interceptors.response.use(
 /** Extrae un mensaje legible del error de Axios, sea cual sea su formato. */
 function obtenerMensajeError(error: AxiosError): string {
   const data = error.response?.data
+  const status = error.response?.status
+  const esPeticionLogin = error.config?.url?.includes('/auth/login')
 
-  // El backend puede devolver un string plano (400 de validación) o un objeto
+  // Error 401 específico para formulario de login
+  if (status === 401 && esPeticionLogin) {
+    return 'Credenciales incorrectas. Verifica tu correo y contraseña.'
+  }
+
+  // El backend puede devolver un string plano (400 de validación) o un objeto JSON
   if (typeof data === 'string' && data.length > 0) return data
   if (typeof data === 'object' && data !== null) {
     const obj = data as Record<string, unknown>
@@ -97,12 +108,12 @@ function obtenerMensajeError(error: AxiosError): string {
   }
 
   // Mensajes genéricos por código de estado
-  switch (error.response?.status) {
+  switch (status) {
     case 400: return 'Los datos enviados no son válidos.'
-    case 401: return 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
-    case 403: return 'No tienes permiso para realizar esta acción.'
+    case 401: return 'Tu sesión ha expirado o el token es inválido. Por favor, inicia sesión nuevamente.'
+    case 403: return 'No tienes permiso para realizar esta acción (Rol insuficiente).'
     case 404: return 'El recurso solicitado no fue encontrado.'
     case 429: return 'Demasiadas peticiones. Por favor, espera un momento e intenta de nuevo.'
-    default:  return 'Ocurrió un error inesperado. Por favor, intenta de nuevo más tarde.'
+    default:  return 'Ocurrió un error inesperado al conectar con el servidor. Intenta de nuevo más tarde.'
   }
 }
