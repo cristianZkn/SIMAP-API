@@ -284,26 +284,24 @@ export function BitacorasListPage() {
                       <td data-label="Descripción">{b.descripcion}</td>
                       <td data-label="Prioridad">
                         <span
-                          className={`${styles.badgePrioridad} ${
-                            prioridadLower === 'alta'
+                          className={`${styles.badgePrioridad} ${prioridadLower === 'alta'
                               ? styles.prioridadAlta
                               : prioridadLower === 'media'
-                              ? styles.prioridadMedia
-                              : styles.prioridadBaja
-                          }`}
+                                ? styles.prioridadMedia
+                                : styles.prioridadBaja
+                            }`}
                         >
                           {b.prioridad}
                         </span>
                       </td>
                       <td data-label="Estado">
                         <span
-                          className={`${styles.badgeEstado} ${
-                            estadoLower === 'pendiente'
+                          className={`${styles.badgeEstado} ${estadoLower === 'pendiente'
                               ? styles.estadoPendiente
                               : estadoLower === 'resuelta'
-                              ? styles.estadoResuelta
-                              : styles.estadoRevision
-                          }`}
+                                ? styles.estadoResuelta
+                                : styles.estadoRevision
+                            }`}
                         >
                           {b.estadoFalla}
                         </span>
@@ -347,7 +345,7 @@ export function BitacorasListPage() {
                                   aria-label={`Modificar estado de falla número ${b.id}`}
                                 >
                                   <option value="pendiente">Pendiente</option>
-                                  <option value="en revisión">En revisión</option>
+                                  <option value="en revisión">Revisión</option>
                                   <option value="resuelta">Resuelta</option>
                                 </select>
                                 <Link
