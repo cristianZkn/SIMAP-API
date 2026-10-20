@@ -8,15 +8,26 @@
  * - Objetivos táctiles mínimos de 44x44px.
  * - Limpieza de caché de TanStack Query y sesión en el logout.
  */
-import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom'
+import { useRef, useEffect } from 'react'
+import { NavLink, Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../features/auth/AuthContext'
 import styles from './Layout.module.css'
+
+const ANIO_ACTUAL = new Date().getFullYear()
 
 export function Layout() {
   const { usuario, rol, logout } = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const location = useLocation()
+  const mainRef = useRef<HTMLElement | null>(null)
+
+  // Gestion de foco al cambiar de ruta para usuarios de lectores de pantalla (WCAG 2.2)
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    mainRef.current?.focus()
+  }, [location.pathname])
 
   const handleLogout = () => {
     // 1. Limpia la sesión del AuthContext y sessionStorage
@@ -91,14 +102,14 @@ export function Layout() {
       </header>
 
       {/* Contenido dinámico renderizado por React Router */}
-      <main id="contenido-principal" className={styles.mainContent} tabIndex={-1}>
+      <main ref={mainRef} id="contenido-principal" className={styles.mainContent} tabIndex={-1}>
         <Outlet />
       </main>
 
       {/* Footer accesible */}
       <footer className={styles.footer}>
         <div className={styles.footerContainer}>
-          <p>© {new Date().getFullYear()} SIMAP — Sistema de Mantenimiento de Parque Automotor.</p>
+          <p>© {ANIO_ACTUAL} SIMAP — Sistema de Mantenimiento de Parque Automotor.</p>
           <p>UT2: Lenguaje de Programación Web II</p>
         </div>
       </footer>

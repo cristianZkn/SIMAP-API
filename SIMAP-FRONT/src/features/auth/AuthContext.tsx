@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components */
 /**
  * AuthContext.tsx — Estado global de sesión del usuario.
  * 
@@ -12,7 +13,7 @@
  * - Se descartó cookie HttpOnly porque el backend no soporta refresh tokens.
  * - Documentado en docs/INFORME_TECNICO.md sección "Autenticación".
  */
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useState, useCallback, type ReactNode } from 'react'
 import type { UsuarioDto } from '../../shared/types'
 
 interface AuthState {
@@ -20,14 +21,14 @@ interface AuthState {
   usuario: UsuarioDto | null
 }
 
-interface AuthContextValue extends AuthState {
+export interface AuthContextValue extends AuthState {
   login: (token: string, usuario: UsuarioDto) => void
   logout: () => void
   isAuthenticated: boolean
   rol: string | null
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null)
+export const AuthContext = createContext<AuthContextValue | null>(null)
 
 /** Valida si un JWT ha expirado leyendo su claim exp (en segundos). */
 function isTokenExpired(token: string): boolean {
@@ -93,9 +94,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-/** Hook tipado para consumir el contexto de autenticación. */
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>')
-  return ctx
-}
+export { useAuth } from './useAuth'

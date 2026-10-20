@@ -147,9 +147,9 @@ export function BitacorasListPage() {
 
       {/* Mensajes de éxito */}
       {mensajeExito && (
-        <div role="status" aria-live="polite" className={`${styles.alertaEstado} ${styles.alertaExito}`}>
+        <output aria-live="polite" className={`${styles.alertaEstado} ${styles.alertaExito}`}>
           <span>{mensajeExito}</span>
-        </div>
+        </output>
       )}
 
       {/* Barra de Filtros y Búsqueda */}
@@ -222,7 +222,10 @@ export function BitacorasListPage() {
 
       {!cargandoBitacoras && !errorBitacoras && bitacorasFiltradas.length > 0 && (
         <>
-          <div className={styles.tablaWrapper}>
+          <section
+            className={styles.tablaWrapper}
+            aria-label="Tabla de reportes de fallas"
+          >
             <table className={styles.tabla}>
               <caption className="sr-only">Listado de reportes de fallas</caption>
               <thead>
@@ -300,7 +303,7 @@ export function BitacorasListPage() {
                 })}
               </tbody>
             </table>
-          </div>
+          </section>
 
           {/* Navegación y Paginación */}
           <nav aria-label="Paginación de bitácoras" className={styles.paginacion}>

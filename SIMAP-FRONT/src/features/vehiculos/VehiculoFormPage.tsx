@@ -20,6 +20,8 @@ import { Spinner } from '../../shared/components/Spinner'
 import type { ApiError } from '../../shared/api/httpClient'
 import styles from './Vehiculos.module.css'
 
+const ANIO_ACTUAL = new Date().getFullYear()
+
 const vehiculoSchema = z.object({
   placa: z
     .string()
@@ -32,7 +34,7 @@ const vehiculoSchema = z.object({
     .number()
     .int('El año debe ser un número entero')
     .min(1900, 'El año debe ser mayor a 1900')
-    .max(new Date().getFullYear() + 1, `El año no puede exceder ${new Date().getFullYear() + 1}`),
+    .max(ANIO_ACTUAL + 1, `El año no puede exceder ${ANIO_ACTUAL + 1}`),
   kilometraje: z
     .number()
     .min(0, 'El kilometraje no puede ser negativo'),
@@ -68,7 +70,7 @@ export function VehiculoFormPage() {
       placa: '',
       marca: '',
       modelo: '',
-      anio: new Date().getFullYear(),
+      anio: ANIO_ACTUAL,
       kilometraje: 0,
       estado: 'Operativo',
     },
@@ -148,6 +150,7 @@ export function VehiculoFormPage() {
                 id="placa"
                 type="text"
                 autoComplete="off"
+                aria-required="true"
                 aria-describedby={errors.placa ? 'placa-error' : undefined}
                 aria-invalid={!!errors.placa}
                 {...register('placa')}
@@ -165,6 +168,7 @@ export function VehiculoFormPage() {
               <input
                 id="marca"
                 type="text"
+                aria-required="true"
                 aria-describedby={errors.marca ? 'marca-error' : undefined}
                 aria-invalid={!!errors.marca}
                 {...register('marca')}
@@ -182,6 +186,7 @@ export function VehiculoFormPage() {
               <input
                 id="modelo"
                 type="text"
+                aria-required="true"
                 aria-describedby={errors.modelo ? 'modelo-error' : undefined}
                 aria-invalid={!!errors.modelo}
                 {...register('modelo')}
@@ -199,6 +204,7 @@ export function VehiculoFormPage() {
               <input
                 id="anio"
                 type="number"
+                aria-required="true"
                 aria-describedby={errors.anio ? 'anio-error' : undefined}
                 aria-invalid={!!errors.anio}
                 {...register('anio', { valueAsNumber: true })}
@@ -217,6 +223,7 @@ export function VehiculoFormPage() {
                 id="kilometraje"
                 type="number"
                 min={0}
+                aria-required="true"
                 aria-describedby={errors.kilometraje ? 'kilometraje-error' : undefined}
                 aria-invalid={!!errors.kilometraje}
                 {...register('kilometraje', { valueAsNumber: true })}
@@ -233,6 +240,7 @@ export function VehiculoFormPage() {
               <label htmlFor="estado">Estado operativo</label>
               <select
                 id="estado"
+                aria-required="true"
                 aria-describedby={errors.estado ? 'estado-error' : undefined}
                 aria-invalid={!!errors.estado}
                 {...register('estado')}

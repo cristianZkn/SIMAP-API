@@ -22,7 +22,7 @@
 
 .subtitulo {
   font-size: 0.9375rem;
-  color: #64748b;
+  color: #475569;
   margin-top: 0.25rem;
 }
 
@@ -110,6 +110,11 @@
   overflow-x: auto;
 }
 
+.tablaWrapper:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .tabla {
   width: 100%;
   border-collapse: collapse;
@@ -154,12 +159,12 @@
 
 .estadoMantenimiento {
   background-color: #fef3c7;
-  color: #b45309;
+  color: #92400e;
 }
 
 .estadoFueraServicio {
   background-color: #fee2e2;
-  color: #b91c1c;
+  color: #991b1b;
 }
 
 .accionesCol {
@@ -169,7 +174,7 @@
 }
 
 .btnEditar {
-  min-height: 38px;
+  min-height: 44px;
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -189,7 +194,7 @@
 }
 
 .btnEliminar {
-  min-height: 38px;
+  min-height: 44px;
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -198,6 +203,9 @@
   border: 1px solid #fecaca;
   border-radius: 4px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btnEliminar:hover {
@@ -251,7 +259,7 @@
   background-color: #ffffff;
   border-radius: 8px;
   border: 1px dashed #cbd5e1;
-  color: #64748b;
+  color: #475569;
 }
 
 /* Tarjeta de Formulario */
@@ -400,5 +408,39 @@
   .tabla td:last-child {
     border-bottom: none;
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .tarjetaFormulario {
+    padding: 1.25rem 1rem;
+  }
+
+  .barraFiltros {
+    padding: 0.75rem;
+  }
+
+  .grupoFiltro {
+    min-width: 100%;
+  }
+
+  .accionesFormulario {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btnCancelar,
+  .btnGuardar {
+    width: 100%;
+  }
+
+  .paginacion {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .botonesPaginacion {
+    justify-content: center;
   }
 }

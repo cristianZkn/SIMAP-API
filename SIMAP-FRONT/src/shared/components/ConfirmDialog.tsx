@@ -39,13 +39,36 @@ export function ConfirmDialog({
     }
   }, [abierto])
 
-  // Cerrar al presionar Escape
+  // Cerrar al presionar Escape y atrapar el foco dentro del dialogo modal (WCAG 2.2)
   useEffect(() => {
     if (!abierto) return
 
     function manejarKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape' && !cargando) {
         onCancelar()
+        return
+      }
+
+      if (e.key === 'Tab' && dialogRef.current) {
+        const elementosEnfocables = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (elementosEnfocables.length === 0) return
+
+        const primerElemento = elementosEnfocables[0]
+        const ultimoElemento = elementosEnfocables[elementosEnfocables.length - 1]
+
+        if (e.shiftKey) {
+          if (document.activeElement === primerElemento) {
+            e.preventDefault()
+            ultimoElemento.focus()
+          }
+        } else {
+          if (document.activeElement === ultimoElemento) {
+            e.preventDefault()
+            primerElemento.focus()
+          }
+        }
       }
     }
 
@@ -56,7 +79,14 @@ export function ConfirmDialog({
   if (!abierto) return null
 
   return (
-    <div className={styles.backdrop} onClick={() => !cargando && onCancelar()}>
+    <div className={styles.backdrop}>
+      <button
+        type="button"
+        className={styles.backdropOverlay}
+        aria-label="Cerrar modal de confirmación"
+        onClick={() => !cargando && onCancelar()}
+        tabIndex={-1}
+      />
       <div
         ref={dialogRef}
         role="alertdialog"
@@ -64,7 +94,6 @@ export function ConfirmDialog({
         aria-labelledby="dialog-titulo"
         aria-describedby="dialog-descripcion"
         className={styles.dialog}
-        onClick={(e) => e.stopPropagation()}
       >
         <h2 id="dialog-titulo" className={styles.titulo}>
           {titulo}

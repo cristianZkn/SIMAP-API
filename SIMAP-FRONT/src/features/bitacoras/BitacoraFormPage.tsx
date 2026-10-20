@@ -151,6 +151,7 @@ export function BitacoraFormPage() {
             <label htmlFor="vehiculoId">Vehículo asignado</label>
             <select
               id="vehiculoId"
+              aria-required="true"
               aria-describedby={errors.vehiculoId ? 'vehiculoId-error' : undefined}
               aria-invalid={!!errors.vehiculoId}
               {...register('vehiculoId', { valueAsNumber: true })}
@@ -176,6 +177,7 @@ export function BitacoraFormPage() {
               id="descripcion"
               rows={4}
               placeholder="Describa el problema observado (ruidos anormales, pérdida de potencia, frenado, etc.)..."
+              aria-required="true"
               aria-describedby={errors.descripcion ? 'descripcion-error' : undefined}
               aria-invalid={!!errors.descripcion}
               {...register('descripcion')}
@@ -192,6 +194,7 @@ export function BitacoraFormPage() {
             <label htmlFor="prioridad">Nivel de prioridad</label>
             <select
               id="prioridad"
+              aria-required="true"
               aria-describedby={errors.prioridad ? 'prioridad-error' : undefined}
               aria-invalid={!!errors.prioridad}
               {...register('prioridad')}
@@ -212,6 +215,7 @@ export function BitacoraFormPage() {
             <label htmlFor="estadoFalla">Estado del reporte</label>
             <select
               id="estadoFalla"
+              aria-required="true"
               aria-describedby={errors.estadoFalla ? 'estadoFalla-error' : undefined}
               aria-invalid={!!errors.estadoFalla}
               {...register('estadoFalla')}

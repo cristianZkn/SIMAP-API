@@ -80,9 +80,9 @@ export function RegisterPage() {
         <p className={styles.subtitulo}>Registro de usuario en SIMAP</p>
 
         {registroExitoso && (
-          <div role="status" aria-live="polite" className={styles.alertaExito}>
+          <output aria-live="polite" className={styles.alertaExito}>
             Cuenta creada con éxito. Redirigiendo al inicio de sesión...
-          </div>
+          </output>
         )}
 
         {errorServidor && (
@@ -99,6 +99,7 @@ export function RegisterPage() {
               id="nombre"
               type="text"
               autoComplete="name"
+              aria-required="true"
               aria-describedby={errors.nombre ? 'nombre-error' : undefined}
               aria-invalid={!!errors.nombre}
               {...nombreRest}
@@ -121,6 +122,7 @@ export function RegisterPage() {
               id="email"
               type="email"
               autoComplete="email"
+              aria-required="true"
               aria-describedby={errors.email ? 'email-error' : undefined}
               aria-invalid={!!errors.email}
               {...register('email')}
@@ -139,6 +141,7 @@ export function RegisterPage() {
               id="password"
               type="password"
               autoComplete="new-password"
+              aria-required="true"
               aria-describedby={errors.password ? 'password-error' : undefined}
               aria-invalid={!!errors.password}
               {...register('password')}
@@ -155,6 +158,7 @@ export function RegisterPage() {
             <label htmlFor="rolId">Rol asignado</label>
             <select
               id="rolId"
+              aria-required="true"
               aria-describedby={errors.rolId ? 'rolId-error' : undefined}
               aria-invalid={!!errors.rolId}
               {...register('rolId', { valueAsNumber: true })}

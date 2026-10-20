@@ -88,6 +88,7 @@ export function LoginPage() {
               id="email"
               type="email"
               autoComplete="email"
+              aria-required="true"
               aria-describedby={errors.email ? 'email-error' : undefined}
               aria-invalid={!!errors.email}
               {...emailRest}
@@ -109,6 +110,7 @@ export function LoginPage() {
               id="password"
               type="password"
               autoComplete="current-password"
+              aria-required="true"
               aria-describedby={errors.password ? 'password-error' : undefined}
               aria-invalid={!!errors.password}
               {...register('password')}
