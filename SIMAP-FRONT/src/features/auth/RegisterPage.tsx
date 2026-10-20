@@ -81,7 +81,7 @@ export function RegisterPage() {
 
         {registroExitoso && (
           <div role="status" aria-live="polite" className={styles.alertaExito}>
-            ✅ ¡Cuenta creada con éxito! Redirigiendo al inicio de sesión…
+            Cuenta creada con éxito. Redirigiendo al inicio de sesión...
           </div>
         )}
 
